@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
   static ThemeData light() {
     return ThemeData(
       brightness: Brightness.light,
-      scaffoldBackgroundColor: AppColors.backgroundLight,
-      fontFamily: 'Inter',
-      primaryColor: AppColors.primary,
       useMaterial3: true,
+
+      // 👇 APPLY INTER HERE
+      textTheme: GoogleFonts.interTextTheme(
+        ThemeData.light().textTheme,
+      ),
     );
   }
 
   static ThemeData dark() {
     return ThemeData(
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.backgroundDark,
-      fontFamily: 'Inter',
-      primaryColor: AppColors.primary,
       useMaterial3: true,
+
+      // 👇 APPLY INTER HERE
+      textTheme: GoogleFonts.interTextTheme(
+        ThemeData.dark().textTheme,
+      ),
     );
   }
 }

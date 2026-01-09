@@ -25,8 +25,10 @@ class FeatureSpotlightSection extends StatelessWidget {
                   children: [
                     Text(
                       'Write code faster with intelligent suggestions',
-                      style:
-                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     SizedBox(height: 16),
                     Text(
@@ -44,11 +46,32 @@ class FeatureSpotlightSection extends StatelessWidget {
                   height: 280,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
-                    color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                    color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
                   ),
-                  child: const Center(
-                    child: Icon(Icons.code, size: 80),
+                  clipBehavior: Clip.antiAlias, // IMPORTANT for rounded corners
+                  child: Stack(
+                    children: [
+                      Image.network(
+                        'https://lh3.googleusercontent.com/aida-public/AB6AXuB-D3XsJ8kvVciMNxqwKLgsuSujH-JcXzc1fhUBmOPJfwg0rYWAUEbkdzjx9p00kM-6GACERnfPPaXZ8hn4Ui621PHj0TOPAAQebPB4HJ23IJFxOC5SZ2zDSqoRE_SUR_9ZNhX6E-_pFsRxCM0tKWtPaAGDr-CQYxwNZVu9q31VOFEsnVvkW6qa8Ogqp1eLU7heAnnQEXIxUH8nWVbMT3Xw4jWcKJTVYJr6NSaU5YLTyiUgnqIqVjzdhbu4ElOlUSl04aRdCcrreyw',
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),
+
+                      // Subtle dark overlay (matches HTML look)
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.25),
+                              Colors.black.withOpacity(0.45),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -69,11 +92,22 @@ class _Bullet extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.check_circle,
-              size: 18, color: Theme.of(context).colorScheme.primary),
+          Icon(
+            Icons.check_circle,
+            size: 18,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(width: 8),
-          Text(text),
+
+          // ✅ FIX: allow text to wrap instead of overflowing
+          Expanded(
+            child: Text(
+              text,
+              softWrap: true,
+            ),
+          ),
         ],
       ),
     );

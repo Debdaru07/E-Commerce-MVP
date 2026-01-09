@@ -46,7 +46,7 @@ class _LandingPageState extends State<LandingPage> {
             controller: _scrollController,
             child: const Column(
               children: [
-                SizedBox(height: 72), // space for navbar
+                SizedBox(height: 72), // space for sticky navbar
                 HeroSection(),
                 SocialProofSection(),
                 FeaturesSection(),
@@ -57,6 +57,8 @@ class _LandingPageState extends State<LandingPage> {
               ],
             ),
           ),
+
+          // Sticky navbar lives OUTSIDE scroll view
           NavbarSection(scrolled: _scrolled),
         ],
       ),

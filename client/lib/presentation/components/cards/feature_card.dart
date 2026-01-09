@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../common/hover_wrapper.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+
 
 class FeatureCard extends StatelessWidget {
   final IconData icon;
@@ -30,7 +32,8 @@ class FeatureCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 32),
+            Icon(icon, size: 24,),
+
             const SizedBox(height: 16),
             Text(title,
                 style:

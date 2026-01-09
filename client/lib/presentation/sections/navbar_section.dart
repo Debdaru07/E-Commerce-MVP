@@ -31,6 +31,15 @@ class NavbarSection extends StatelessWidget {
               color: Theme.of(context)
                   .scaffoldBackgroundColor
                   .withOpacity(scrolled ? 0.85 : 1),
+              boxShadow: scrolled
+                  ? [
+                      BoxShadow(
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                        color: Colors.black.withOpacity(0.12),
+                      ),
+                    ]
+                  : [],
               border: Border(
                 bottom: BorderSide(
                   color: scrolled
@@ -39,36 +48,71 @@ class NavbarSection extends StatelessWidget {
                 ),
               ),
             ),
-            child: const Row(
-              children: [
-                Icon(Icons.dataset, size: 28),
-                SizedBox(width: 8),
-                Text(
-                  'SaaS Product',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                ),
-                Spacer(),
-                Row(
+
+            // 👇 RESPONSIVE FIX IS HERE
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final bool isDesktop = constraints.maxWidth >= 900;
+
+                return Row(
                   children: [
-                    TextButton(onPressed: null, child: Text('Features')),
-                    SizedBox(width: 16),
-                    TextButton(onPressed: null, child: Text('Pricing')),
-                    SizedBox(width: 16),
-                    TextButton(onPressed: null, child: Text('About')),
-                    SizedBox(width: 24),
-                    OutlineButtonWidget(text: 'Sign In'),
-                    SizedBox(width: 12),
-                    PrimaryButton(text: 'Get Started'),
+                    const Icon(Icons.dataset, size: 28),
+                    const SizedBox(width: 8),
+                    const Text(
+                      'SaaS Product',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const Spacer(),
+
+                    if (isDesktop)
+                      const _DesktopNav()
+                    else
+                      const _MobileNav(),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DesktopNav extends StatelessWidget {
+  const _DesktopNav();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        TextButton(onPressed: null, child: Text('Features')),
+        SizedBox(width: 16),
+        TextButton(onPressed: null, child: Text('Pricing')),
+        SizedBox(width: 16),
+        TextButton(onPressed: null, child: Text('About')),
+        SizedBox(width: 24),
+        OutlineButtonWidget(text: 'Sign In'),
+        SizedBox(width: 12),
+        PrimaryButton(text: 'Get Started'),
+      ],
+    );
+  }
+}
+
+class _MobileNav extends StatelessWidget {
+  const _MobileNav();
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      icon: const Icon(Icons.menu),
+      onPressed: () {
+        // TODO: open mobile drawer
+      },
     );
   }
 }

@@ -11,9 +11,18 @@ import wishlistRoutes from './routes/wishlist.routes.js'
 
 const app = express()
 
+// ✅ GLOBAL MIDDLEWARE (MUST COME FIRST)
 app.use(cors())
 app.use(express.json())
 
+// ✅ DEBUG MIDDLEWARE (TEMP)
+app.use((req, res, next) => {
+  console.log('HEADERS:', req.headers['content-type'])
+  console.log('BODY:', req.body)
+  next()
+})
+
+// ✅ ROUTES
 app.use('/auth/consumer', consumerRoutes)
 app.use('/auth/dealer', dealerRoutes)
 app.use('/auth/admin', adminRoutes)

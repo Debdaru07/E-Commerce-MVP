@@ -1,33 +1,39 @@
 import { Router } from 'express'
+import {
+  getAllProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct
+} from '../controllers/products.controller.js'
 
 const router = Router()
 
-/**
- * Get all active products (Public / Consumer)
- */
-router.get('/', async (req, res) => {
-  res.json({ message: 'Get products route working' })
-})
+import { verifyToken } from '../middleware/auth.js'
+import { requireRole } from '../middleware/role.js'
+// Middleware to protect dealer routes
 
 /**
- * Create product (Dealer)
+ * PUBLIC / CONSUMER
+ * Get all active products
  */
-router.post('/', async (req, res) => {
-  res.json({ message: 'Create product route working' })
-})
+router.get('/', getAllProducts)
 
 /**
- * Update product (Dealer)
+ * DEALER
+ * Create product
  */
-router.put('/:id', async (req, res) => {
-  res.json({ message: 'Update product route working' })
-})
+router.post('/', createProduct)
 
 /**
- * Delete product (Dealer)
+ * DEALER
+ * Update product
  */
-router.delete('/:id', async (req, res) => {
-  res.json({ message: 'Delete product route working' })
-})
+router.put('/:id', updateProduct)
+
+/**
+ * DEALER
+ * Delete product
+ */
+router.delete('/:id', deleteProduct)
 
 export default router

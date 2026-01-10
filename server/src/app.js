@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 
+import categoryRoutes from './routes/category.routes.js'
 import consumerRoutes from './routes/auth/consumer.routes.js'
 import dealerRoutes from './routes/auth/dealer.routes.js'
 import adminRoutes from './routes/auth/admin.routes.js'
@@ -30,5 +31,7 @@ app.use('/auth/admin', adminRoutes)
 app.use('/products', productRoutes)
 app.use('/orders', orderRoutes)
 app.use('/wishlist', wishlistRoutes)
+app.use('/categories', categoryRoutes)
+
 
 export default app

@@ -20,12 +20,15 @@ class App extends StatelessWidget {
         ),
       ],
       child: Consumer<ThemeProvider>(
-        builder: (_, theme, __) {
+        builder: (_, themeProvider, __) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            theme: AppTheme.light(),
-            darkTheme: AppTheme.dark(),
-            themeMode: theme.mode,
+
+            // ✅ Correct theme references
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeProvider.themeMode,
+
             home: const LandingPage(),
           );
         },

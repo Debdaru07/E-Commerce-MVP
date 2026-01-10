@@ -1,7 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
+import '../../core/theme/theme_provider.dart';
 
 class NavbarSection extends StatelessWidget {
   final bool scrolled;
@@ -48,8 +50,6 @@ class NavbarSection extends StatelessWidget {
                 ),
               ),
             ),
-
-            // 👇 RESPONSIVE FIX IS HERE
             child: LayoutBuilder(
               builder: (context, constraints) {
                 final bool isDesktop = constraints.maxWidth >= 900;
@@ -87,17 +87,34 @@ class _DesktopNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    final themeProvider = context.watch<ThemeProvider>();
+
+    return Row(
       children: [
-        TextButton(onPressed: null, child: Text('Features')),
-        SizedBox(width: 16),
-        TextButton(onPressed: null, child: Text('Pricing')),
-        SizedBox(width: 16),
-        TextButton(onPressed: null, child: Text('About')),
-        SizedBox(width: 24),
-        OutlineButtonWidget(text: 'Sign In'),
-        SizedBox(width: 12),
-        PrimaryButton(text: 'Get Started'),
+        TextButton(onPressed: null, child: const Text('Features')),
+        const SizedBox(width: 16),
+        TextButton(onPressed: null, child: const Text('Pricing')),
+        const SizedBox(width: 16),
+        TextButton(onPressed: null, child: const Text('About')),
+        const SizedBox(width: 16),
+
+        // 🌗 Theme toggle
+        IconButton(
+          tooltip: themeProvider.isDark ? 'Light mode' : 'Dark mode',
+          icon: Icon(
+            themeProvider.isDark
+                ? Icons.light_mode_outlined
+                : Icons.dark_mode_outlined,
+          ),
+          onPressed: () {
+            context.read<ThemeProvider>().toggleTheme();
+          },
+        ),
+
+        const SizedBox(width: 16),
+        const OutlineButtonWidget(text: 'Sign In'),
+        const SizedBox(width: 12),
+        const PrimaryButton(text: 'Get Started'),
       ],
     );
   }
@@ -108,11 +125,29 @@ class _MobileNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.menu),
-      onPressed: () {
-        // TODO: open mobile drawer
-      },
+    final themeProvider = context.watch<ThemeProvider>();
+
+    return Row(
+      children: [
+        // 🌗 Theme toggle (mobile)
+        IconButton(
+          icon: Icon(
+            themeProvider.isDark
+                ? Icons.light_mode_outlined
+                : Icons.dark_mode_outlined,
+          ),
+          onPressed: () {
+            context.read<ThemeProvider>().toggleTheme();
+          },
+        ),
+
+        IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            // TODO: open mobile drawer
+          },
+        ),
+      ],
     );
   }
 }

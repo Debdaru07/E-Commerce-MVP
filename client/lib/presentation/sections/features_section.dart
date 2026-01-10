@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '../components/cards/feature_card.dart';
 
 class FeaturesSection extends StatelessWidget {
@@ -6,25 +7,25 @@ class FeaturesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 100),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 100),
       child: Wrap(
         spacing: 24,
         runSpacing: 24,
         alignment: WrapAlignment.center,
         children: [
           FeatureCard(
-            icon: Icons.cloud_sync,
+            icon: LucideIcons.cloudCog,
             title: 'Real-time Sync',
             description: 'Instant updates across all devices.',
           ),
-          FeatureCard(
-            icon: Icons.monitor,
+          const FeatureCard(
+            icon: LucideIcons.barChart3,
             title: 'Advanced Analytics',
             description: 'Powerful insights with visual dashboards.',
           ),
-          FeatureCard(
-            icon: Icons.diversity_3,
+          const FeatureCard(
+            icon: LucideIcons.users,
             title: 'Team Collaboration',
             description: 'Assign roles and manage workflows.',
           ),

@@ -25,9 +25,10 @@ class CTASection extends StatelessWidget {
                   Text(
                     'Ready to get started?',
                     style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   SizedBox(height: 12),
                   Text(
@@ -41,7 +42,12 @@ class CTASection extends StatelessWidget {
               children: [
                 PrimaryButton(text: 'Start Free Trial'),
                 SizedBox(width: 12),
-                OutlineButtonWidget(text: 'Contact Sales'),
+
+                // 👇 ADD SIZED BOX AROUND CONTACT SALES
+                SizedBox(
+                  width: 160,
+                  child: OutlineButtonWidget(text: 'Contact Sales'),
+                ),
               ],
             ),
           ],

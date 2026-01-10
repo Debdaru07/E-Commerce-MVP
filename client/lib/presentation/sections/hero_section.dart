@@ -7,10 +7,10 @@ class HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 120),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 120),
       child: Column(
-        children: const [
+        children: [
           SectionHeader(
             title: 'Supercharge your Workflow with AI',
             subtitle:

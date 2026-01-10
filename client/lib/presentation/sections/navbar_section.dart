@@ -87,8 +87,8 @@ class _DesktopNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         TextButton(onPressed: null, child: Text('Features')),
         SizedBox(width: 16),
         TextButton(onPressed: null, child: Text('Pricing')),

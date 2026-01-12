@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'core/routing/app_router.dart';
-import 'core/routing/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'features/admin/pages/admin_dashboard_page.dart';
+import 'presentation/pages/landing_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -18,7 +19,10 @@ class App extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
-      initialRoute: AppRoutes.landing,
+      routes: {
+        '/': (_) => const LandingPage(),
+        '/admin': (_) => const AdminDashboardPage(),
+      },
       onGenerateRoute: AppRouter.generate,
     );
   }

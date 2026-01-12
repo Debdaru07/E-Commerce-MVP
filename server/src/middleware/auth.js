@@ -1,5 +1,6 @@
 import supabase from '../config/supabase.js'
 
+
 export const verifyToken = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization

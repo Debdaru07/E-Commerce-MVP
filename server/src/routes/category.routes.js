@@ -6,8 +6,8 @@ import {
   deleteCategory
 } from '../controllers/category.controller.js'
 
-import { verifyToken } from '../middlewares/auth.js'
-import { requireRole } from '../middlewares/role.js'
+import { verifyToken } from '../middleware/auth.js'
+import { requireRole } from '../middleware/role.js'
 
 const router = Router()
 

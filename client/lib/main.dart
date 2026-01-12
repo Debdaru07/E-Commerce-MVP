@@ -3,11 +3,23 @@ import 'package:provider/provider.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
+import 'data/services/waitlist_service.dart';
 import 'presentation/pages/landing_page.dart';
+import 'providers/waitlist_provider.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // 🔑 important
-  runApp(const AppRoot());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (_) => WaitlistProvider(WaitlistService()),
+        ),
+      ],
+      child: const AppRoot(),
+    ),
+  );
 }
 
 class AppRoot extends StatelessWidget {

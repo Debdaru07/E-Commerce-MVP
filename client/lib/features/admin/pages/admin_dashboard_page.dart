@@ -1,3 +1,5 @@
+import 'dart:developer' as console;
+
 import 'package:flutter/material.dart';
 
 class AdminDashboardPage extends StatefulWidget {
@@ -10,6 +12,7 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
   @override
   Widget build(BuildContext context) {
+    console.log('admin screen ??');
     return Scaffold(
       appBar: AppBar(title: const Text('Admin Dashboard')),
       body: const Center(

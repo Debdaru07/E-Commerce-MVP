@@ -1,39 +1,72 @@
 import { Router } from 'express'
+
 import {
   getAllProducts,
   createProduct,
   updateProduct,
-  deleteProduct
-} from '../controllers/products.controller.js'
+  deleteProduct,
+   getDealerProducts
 
-const router = Router()
+} from '../controllers/products.controller.js'
 
 import { verifyToken } from '../middleware/auth.js'
 import { requireRole } from '../middleware/role.js'
-// Middleware to protect dealer routes
+
+const router = Router()
 
 /**
  * PUBLIC / CONSUMER
  * Get all active products
+ * Supports filters & sorting via query params
  */
 router.get('/', getAllProducts)
 
+
+
 /**
  * DEALER
+ * Get own products (⚠️ must be before /:id)
+ */
+router.get(
+  '/dealer/my-products',
+  verifyToken,
+  requireRole('DEALER'),
+  getDealerProducts
+)
+/**
+ * DEALER ONLY
  * Create product
  */
-router.post('/', createProduct)
+router.post(
+  '/',
+  verifyToken,
+  requireRole('DEALER'),
+  createProduct
+)
 
 /**
- * DEALER
- * Update product
+ * DEALER ONLY
+ * Update own product
  */
-router.put('/:id', updateProduct)
+router.put(
+  '/:id',
+  verifyToken,
+  requireRole('DEALER'),
+  updateProduct
+)
 
 /**
- * DEALER
- * Delete product
+ * DEALER ONLY
+ * Delete own product
  */
-router.delete('/:id', deleteProduct)
+router.delete(
+  '/:id',
+  verifyToken,
+  requireRole('DEALER'),
+  deleteProduct
+)
+
+
+
 
 export default router

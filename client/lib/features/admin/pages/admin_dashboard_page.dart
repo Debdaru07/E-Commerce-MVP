@@ -6,6 +6,7 @@ import '../providers/admin_state.dart';
 import '../widgets/kpi_grid.dart';
 import '../widgets/page_header.dart';
 import '../widgets/quick_actions_card.dart';
+import 'category/category_management_page.dart';
 import 'dealers/dealer_management_page.dart';
 import 'products/products_management_page.dart';
 import 'users/users_management_page.dart';
@@ -37,6 +38,7 @@ class AdminDashboardPage extends StatelessWidget {
       case AdminTab.products:
         return const ProductsManagementPage();
       case AdminTab.categories:
+        return const CategoryManagementPage();
       case AdminTab.settings:
       case AdminTab.roles:
         return _SimpleLabelContent(title: tab.label);

@@ -2,65 +2,51 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../widgets/filter_toolbar.dart';
+import '../../widgets/management_header.dart';
+import '../../widgets/status_pill.dart';
 
 class UsersManagementPage extends StatelessWidget {
   const UsersManagementPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Container(
       color: AppColors.backgroundDark,
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _header(),
+          // ✅ Reused Header
+          ManagementHeader(
+            title: 'User Management',
+            subtitle:
+                'Manage access, permissions, and status for your team members.',
+            actionLabel: 'Add New User',
+            onAction: () {},
+          ),
+
           const SizedBox(height: 24),
+
           _statsRow(),
+
           const SizedBox(height: 24),
-          _toolbar(),
+
+          // ✅ Reused Toolbar
+          const FilterToolbar(
+            hintText: 'Search users by name, email...',
+            filters: ['All Roles', 'Admins', 'Editors', 'Viewers'],
+          ),
+
           const SizedBox(height: 24),
-          Expanded(child: _usersTable(context)),
+
+          Expanded(
+            child: _usersTable(screenWidth),
+          ),
         ],
       ),
-    );
-  }
-
-  // ================= HEADER =================
-  Widget _header() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('User Management', style: AppTextStyles.heading),
-            const SizedBox(height: 4),
-            Text(
-              'Manage access, permissions, and status for your team members.',
-              style: AppTextStyles.subheading,
-            ),
-          ],
-        ),
-        ElevatedButton.icon(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-          icon: const Icon(Icons.add, size: 18),
-          label: Text(
-            'Add New User',
-            style: AppTextStyles.body.copyWith(
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
     );
   }
 
@@ -104,70 +90,9 @@ class UsersManagementPage extends StatelessWidget {
     );
   }
 
-  // ================= TOOLBAR =================
-  Widget _toolbar() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              style: AppTextStyles.body,
-              decoration: InputDecoration(
-                prefixIcon:
-                    const Icon(Icons.search, color: AppColors.textSecondary),
-                hintText: 'Search users by name, email...',
-                hintStyle: AppTextStyles.caption,
-                filled: true,
-                fillColor: AppColors.backgroundDark,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          _chip('All Roles', active: true),
-          _chip('Admins'),
-          _chip('Editors'),
-          _chip('Viewers'),
-        ],
-      ),
-    );
-  }
-
-  Widget _chip(String label, {bool active = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: active ? AppColors.primary : AppColors.backgroundDark,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.borderDark),
-        ),
-        child: Text(
-          label,
-          style: AppTextStyles.labelSmall.copyWith(
-            color: active ? Colors.white : AppColors.textSecondary,
-          ),
-        ),
-      ),
-    );
-  }
-
   // ================= DATA TABLE =================
-  Widget _usersTable(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
+  Widget _usersTable(double screenWidth) {
     return Container(
-      width: double.infinity,
       decoration: BoxDecoration(
         color: AppColors.surfaceDark,
         borderRadius: BorderRadius.circular(12),
@@ -183,10 +108,9 @@ class UsersManagementPage extends StatelessWidget {
             headingRowHeight: 48,
             dataRowHeight: 72,
             headingRowColor: WidgetStateProperty.all(AppColors.backgroundDark),
-            dividerThickness: 0.6,
-            columnSpacing: 32,
             headingTextStyle: AppTextStyles.labelSmall,
             dataTextStyle: AppTextStyles.body,
+            columnSpacing: 32,
             columns: const [
               DataColumn(label: SizedBox(width: 24)),
               DataColumn(label: Text('NAME')),
@@ -196,35 +120,35 @@ class UsersManagementPage extends StatelessWidget {
               DataColumn(label: Text('ACTIONS')),
             ],
             rows: [
-              _row(
+              _UserRow(
                 name: 'Sophia Williams',
                 email: 'sophia@example.com',
                 role: 'Admin',
                 status: 'Active',
                 lastLogin: 'Oct 24, 2023\n12:30 PM',
               ),
-              _row(
+              _UserRow(
                 name: 'Ethan Hunt',
                 email: 'ethan.h@example.com',
                 role: 'Editor',
                 status: 'Active',
                 lastLogin: 'Oct 23, 2023\n09:15 AM',
               ),
-              _row(
+              _UserRow(
                 name: 'James Lee',
                 email: 'j.lee@example.com',
                 role: 'Viewer',
                 status: 'Offline',
                 lastLogin: 'Sep 15, 2023\n04:45 PM',
               ),
-              _row(
+              _UserRow(
                 name: 'Michael Chen',
                 email: 'm.chen@example.com',
                 role: 'Editor',
                 status: 'Pending',
                 lastLogin: 'Invited 2h ago',
               ),
-              _row(
+              _UserRow(
                 name: 'Olivia Martinez',
                 email: 'omartinez@example.com',
                 role: 'Viewer',
@@ -237,65 +161,38 @@ class UsersManagementPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  static DataRow _row({
+// ================= USER ROW =================
+class _UserRow extends DataRow {
+  _UserRow({
     required String name,
     required String email,
     required String role,
     required String status,
     required String lastLogin,
-  }) {
-    return DataRow(
-      cells: [
-        const DataCell(Checkbox(value: false, onChanged: null)),
-        DataCell(
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(name, style: AppTextStyles.body),
-              const SizedBox(height: 4),
-              Text(email, style: AppTextStyles.caption),
-            ],
-          ),
-        ),
-        DataCell(Text(role, style: AppTextStyles.caption)),
-        DataCell(_statusPill(status)),
-        DataCell(
-          Text(lastLogin, style: AppTextStyles.caption),
-        ),
-        const DataCell(
-          Icon(Icons.more_vert, color: AppColors.textSecondary),
-        ),
-      ],
-    );
-  }
-
-  static Widget _statusPill(String status) {
-    Color color;
-    switch (status) {
-      case 'Active':
-        color = Colors.greenAccent;
-        break;
-      case 'Pending':
-        color = Colors.orangeAccent;
-        break;
-      default:
-        color = Colors.grey;
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        status,
-        style: AppTextStyles.caption.copyWith(color: color),
-      ),
-    );
-  }
+  }) : super(
+          cells: [
+            const DataCell(Checkbox(value: false, onChanged: null)),
+            DataCell(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(name),
+                  const SizedBox(height: 4),
+                  Text(email, style: AppTextStyles.caption),
+                ],
+              ),
+            ),
+            DataCell(Text(role, style: AppTextStyles.caption)),
+            DataCell(StatusPill(status)),
+            DataCell(Text(lastLogin, style: AppTextStyles.caption)),
+            const DataCell(
+              Icon(Icons.more_vert, color: AppColors.textSecondary),
+            ),
+          ],
+        );
 }
 
 // ================= STAT CARD =================
@@ -328,7 +225,6 @@ class _StatCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Title + Icon
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -338,17 +234,10 @@ class _StatCard extends StatelessWidget {
                   color: AppColors.textMuted,
                 ),
               ),
-              Icon(
-                icon,
-                size: 20,
-                color: AppColors.textMuted,
-              ),
+              Icon(icon, size: 20, color: AppColors.textMuted),
             ],
           ),
-
           const SizedBox(height: 12),
-
-          // ── Value + Trend
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

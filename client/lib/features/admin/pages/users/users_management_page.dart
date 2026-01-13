@@ -69,15 +69,36 @@ class UsersManagementPage extends StatelessWidget {
     return const Row(
       children: [
         Expanded(
-          child: _StatCard(title: 'Total Users', value: '1,240'),
+          child: _StatCard(
+            title: 'Total Users',
+            value: '1,240',
+            icon: Icons.group,
+            trend: '12%',
+            trendUp: true,
+            trendColor: Colors.greenAccent,
+          ),
         ),
-        SizedBox(width: 16),
+        SizedBox(width: 20),
         Expanded(
-          child: _StatCard(title: 'Active Users', value: '1,100'),
+          child: _StatCard(
+            title: 'Active Users',
+            value: '1,100',
+            icon: Icons.person_outline,
+            trend: '5%',
+            trendUp: true,
+            trendColor: Colors.greenAccent,
+          ),
         ),
-        SizedBox(width: 16),
+        SizedBox(width: 20),
         Expanded(
-          child: _StatCard(title: 'Pending Invites', value: '140'),
+          child: _StatCard(
+            title: 'Pending Invites',
+            value: '140',
+            icon: Icons.mail_outline,
+            trend: '2%',
+            trendUp: false,
+            trendColor: Colors.orangeAccent,
+          ),
         ),
       ],
     );
@@ -281,8 +302,19 @@ class UsersManagementPage extends StatelessWidget {
 class _StatCard extends StatelessWidget {
   final String title;
   final String value;
+  final IconData icon;
+  final String trend;
+  final bool trendUp;
+  final Color trendColor;
 
-  const _StatCard({required this.title, required this.value});
+  const _StatCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.trend,
+    required this.trendUp,
+    required this.trendColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -290,15 +322,74 @@ class _StatCard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.borderDark),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: AppTextStyles.caption),
+          // ── Title + Icon
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: AppTextStyles.caption.copyWith(
+                  color: AppColors.textMuted,
+                ),
+              ),
+              Icon(
+                icon,
+                size: 20,
+                color: AppColors.textMuted,
+              ),
+            ],
+          ),
+
           const SizedBox(height: 12),
-          Text(value, style: AppTextStyles.sectionTitle),
+
+          // ── Value + Trend
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                value,
+                style: AppTextStyles.sectionTitle.copyWith(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(width: 10),
+              _trendBadge(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _trendBadge() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+        color: trendColor.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            trendUp ? Icons.trending_up : Icons.trending_down,
+            size: 14,
+            color: trendColor,
+          ),
+          const SizedBox(width: 2),
+          Text(
+            trend,
+            style: AppTextStyles.labelSmall.copyWith(
+              color: trendColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

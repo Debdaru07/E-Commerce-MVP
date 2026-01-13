@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_text_styles.dart';
 import '../widgets/category_chips_row.dart';
 import '../widgets/consumer_app_bar.dart';
 import '../widgets/product_card.dart';
@@ -13,7 +12,6 @@ class ConsumerHomePage extends StatefulWidget {
 }
 
 class _ConsumerHomePageState extends State<ConsumerHomePage> {
-  int _currentIndex = 0;
   int _selectedCategory = 0;
 
   final products = List.generate(
@@ -45,10 +43,10 @@ class _ConsumerHomePageState extends State<ConsumerHomePage> {
               child: GridView.builder(
                 itemCount: products.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.65,
-                  crossAxisSpacing: 16,
+                  crossAxisCount: 6,
                   mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 0.72,
                 ),
                 itemBuilder: (_, index) {
                   return ProductCard(product: products[index]);

@@ -11,83 +11,80 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // IMAGE CONTAINER (KEY FIX)
-          AspectRatio(
-            aspectRatio: 4 / 5, // 👈 matches Image 1
-            child: Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    product.imageUrl,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.contain, // 👈 IMPORTANT
-                  ),
-                ),
-
-                // Badge
-                if (product.badge != null)
-                  Positioned(
-                    top: 8,
-                    left: 8,
-                    child: ProductBadge(
-                      text: product.badge!,
-                      color: _badgeColor(product.badge!),
-                    ),
-                  ),
-
-                // Favorite
-                const Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Icon(Icons.favorite_border, size: 18),
-                ),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 🔥 FIXED IMAGE HEIGHT (KEY)
+        Container(
+          height: 220, // 👈 adjust once, stable everywhere
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            color: AppColors.surfaceDark,
           ),
-
-          const SizedBox(height: 12),
-
-          Text(
-            product.name,
-            style: AppTextStyles.subheading,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-
-          const SizedBox(height: 6),
-
-          Row(
+          clipBehavior: Clip.antiAlias,
+          child: Stack(
             children: [
-              Text(
-                '\$${product.price.toStringAsFixed(0)}',
-                style: AppTextStyles.body.copyWith(
-                  fontWeight: FontWeight.w600,
+              Image.network(
+                product.imageUrl,
+                width: double.infinity,
+                height: double.infinity,
+                fit: BoxFit.cover, // matches Image 2
+              ),
+              if (product.badge != null)
+                Positioned(
+                  top: 10,
+                  left: 10,
+                  child: ProductBadge(
+                    text: product.badge!,
+                    color: _badgeColor(product.badge!),
+                  ),
+                ),
+              const Positioned(
+                top: 10,
+                right: 10,
+                child: Icon(
+                  Icons.favorite_border,
+                  size: 18,
+                  color: Colors.white,
                 ),
               ),
-              if (product.oldPrice != null) ...[
-                const SizedBox(width: 6),
-                Text(
-                  '\$${product.oldPrice}',
-                  style: AppTextStyles.caption.copyWith(
-                    decoration: TextDecoration.lineThrough,
-                  ),
-                ),
-              ],
             ],
           ),
-        ],
-      ),
+        ),
+
+        const SizedBox(height: 10),
+
+        // TEXT SECTION (NOW SAFE)
+        Text(
+          product.name,
+          style: AppTextStyles.subheading,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+        const SizedBox(height: 4),
+
+        Row(
+          children: [
+            Text(
+              '\$${product.price.toStringAsFixed(0)}',
+              style: AppTextStyles.body.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (product.oldPrice != null) ...[
+              const SizedBox(width: 6),
+              Text(
+                '\$${product.oldPrice}',
+                style: AppTextStyles.caption.copyWith(
+                  decoration: TextDecoration.lineThrough,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
     );
   }
 

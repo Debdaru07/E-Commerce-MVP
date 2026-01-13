@@ -7,6 +7,7 @@ import '../widgets/kpi_grid.dart';
 import '../widgets/page_header.dart';
 import '../widgets/quick_actions_card.dart';
 import 'dealers/dealer_management_page.dart';
+import 'products/products_management_page.dart';
 import 'users/users_management_page.dart';
 
 class AdminDashboardPage extends StatelessWidget {
@@ -34,6 +35,7 @@ class AdminDashboardPage extends StatelessWidget {
       case AdminTab.dealers:
         return const DealerManagementPage();
       case AdminTab.products:
+        return const ProductsManagementPage();
       case AdminTab.categories:
       case AdminTab.settings:
       case AdminTab.roles:

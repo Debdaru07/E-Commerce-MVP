@@ -30,30 +30,36 @@ class _ConsumerHomePageState extends State<ConsumerHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: const ConsumerAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CategoryChipsRow(
-              selectedIndex: _selectedCategory,
-              onChanged: (i) => setState(() => _selectedCategory = i),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: GridView.builder(
-                itemCount: products.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 6,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 0.72,
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1440),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                CategoryChipsRow(
+                  selectedIndex: _selectedCategory,
+                  onChanged: (i) => setState(() => _selectedCategory = i),
                 ),
-                itemBuilder: (_, index) {
-                  return ProductCard(product: products[index]);
-                },
-              ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: GridView.builder(
+                    itemCount: products.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.78,
+                    ),
+                    itemBuilder: (_, index) {
+                      return ProductCard(product: products[index]);
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

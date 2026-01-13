@@ -5,6 +5,7 @@ import 'core/routing/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 import 'features/admin/pages/admin_dashboard_page.dart';
+import 'features/consumer/pages/consumer_home_page.dart';
 import 'presentation/pages/landing_page.dart';
 
 class App extends StatelessWidget {
@@ -22,6 +23,7 @@ class App extends StatelessWidget {
       routes: {
         '/': (_) => const LandingPage(),
         '/admin': (_) => const AdminDashboardPage(),
+        '/consumer': (_) => const ConsumerHomePage()
       },
       onGenerateRoute: AppRouter.generate,
     );

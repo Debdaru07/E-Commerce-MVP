@@ -37,6 +37,7 @@ class _ConsumerHomePageState extends State<ConsumerHomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               children: [
+                const SizedBox(height: 16),
                 CategoryChipsRow(
                   selectedIndex: _selectedCategory,
                   onChanged: (i) => setState(() => _selectedCategory = i),
@@ -46,8 +47,8 @@ class _ConsumerHomePageState extends State<ConsumerHomePage> {
                   child: GridView.builder(
                     itemCount: products.length,
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 5,
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 300, // 👈 key value
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
                       childAspectRatio: 0.78,

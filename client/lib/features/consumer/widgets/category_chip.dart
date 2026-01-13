@@ -4,8 +4,8 @@ import '../../../core/constants/app_colors.dart';
 
 class CategoryChip extends StatelessWidget {
   final String label;
-  final bool selected;
   final IconData? icon;
+  final bool selected;
   final VoidCallback onTap;
 
   const CategoryChip({
@@ -21,22 +21,35 @@ class CategoryChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        margin: const EdgeInsets.only(right: 8),
+        height: 40, // matches HTML h-10
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
-          color: selected ? Colors.indigo : Colors.transparent,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: selected ? Colors.transparent : Colors.white24,
-          ),
+          color: selected ? AppColors.primary : AppColors.surfaceDark,
+          borderRadius: BorderRadius.circular(999),
+          border: selected
+              ? null
+              : Border.all(
+                  color: Colors.white.withOpacity(0.12),
+                ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.25),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : null,
         ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
               Icon(
                 icon,
                 size: 18,
-                color: selected ? Colors.white : Colors.grey,
+                color: selected ? Colors.white : AppColors.textSecondary,
               ),
               const SizedBox(width: 6),
             ],
@@ -44,6 +57,7 @@ class CategoryChip extends StatelessWidget {
               label,
               style: AppTextStyles.subheading.copyWith(
                 color: selected ? Colors.white : AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

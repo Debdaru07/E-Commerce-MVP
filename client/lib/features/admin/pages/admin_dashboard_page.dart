@@ -1,22 +1,26 @@
-import 'dart:developer' as console;
-
 import 'package:flutter/material.dart';
 
-class AdminDashboardPage extends StatefulWidget {
+import '../layout/admin_scaffold.dart';
+import '../widgets/kpi_grid.dart';
+import '../widgets/page_header.dart';
+
+class AdminDashboardPage extends StatelessWidget {
   const AdminDashboardPage({super.key});
 
   @override
-  State<AdminDashboardPage> createState() => _AdminDashboardPageState();
-}
-
-class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  @override
   Widget build(BuildContext context) {
-    console.log('admin screen ??');
-    return Scaffold(
-      appBar: AppBar(title: const Text('Admin Dashboard')),
-      body: const Center(
-        child: Text('Admin controls, users, reports'),
+    return const AdminScaffold(
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PageHeader(),
+            SizedBox(height: 24),
+            KpiGrid(),
+            SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

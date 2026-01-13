@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import '../widgets/category_chips_row.dart';
+import '../widgets/consumer_app_bar.dart';
+import '../widgets/product_card.dart';
+import '../models/product_ui_model.dart';
 
 class ConsumerHomePage extends StatefulWidget {
   const ConsumerHomePage({super.key});
@@ -8,32 +12,56 @@ class ConsumerHomePage extends StatefulWidget {
 }
 
 class _ConsumerHomePageState extends State<ConsumerHomePage> {
-  int _currentIndex = 0;
+  int _selectedCategory = 0;
+
+  final products = List.generate(
+    10,
+    (i) => ProductUIModel(
+      name: 'Product $i',
+      price: 99 + i * 10,
+      oldPrice: i.isEven ? 129 : null,
+      rating: 4.6,
+      badge: i == 0 ? 'Sale' : null,
+      imageUrl: 'https://picsum.photos/400/600?random=$i',
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Consumer App')),
+      appBar: const ConsumerAppBar(),
       body: Center(
-        child: Text('Consumer Tab $_currentIndex'),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1440),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                CategoryChipsRow(
+                  selectedIndex: _selectedCategory,
+                  onChanged: (i) => setState(() => _selectedCategory = i),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: GridView.builder(
+                    itemCount: products.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 300, // 👈 key value
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      childAspectRatio: 0.78,
+                    ),
+                    itemBuilder: (_, index) {
+                      return ProductCard(product: products[index]);
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+        ),
       ),
     );
   }

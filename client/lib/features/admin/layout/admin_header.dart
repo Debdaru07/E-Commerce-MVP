@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/app_text_styles.dart';
+
 class AdminHeader extends StatelessWidget {
   const AdminHeader({super.key});
 
@@ -9,22 +12,23 @@ class AdminHeader extends StatelessWidget {
       height: 64,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       decoration: const BoxDecoration(
-        color: Color(0xFF1C192E),
+        color: AppColors.surfaceDark,
         border: Border(
-          bottom: BorderSide(color: Color(0xFF2E294E)),
+          bottom: BorderSide(color: AppColors.borderDark),
         ),
       ),
       child: Row(
         children: [
-          const Text(
+          Text(
             'Dashboard',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: AppTextStyles.sectionTitle,
           ),
           const Spacer(),
-          _SearchBar(),
+          const _SearchBar(),
           const SizedBox(width: 16),
           IconButton(
             icon: const Icon(Icons.notifications),
+            color: AppColors.textSecondary,
             onPressed: () {},
           ),
         ],
@@ -34,16 +38,23 @@ class AdminHeader extends StatelessWidget {
 }
 
 class _SearchBar extends StatelessWidget {
+  const _SearchBar();
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 320,
       height: 40,
       child: TextField(
+        style: AppTextStyles.body,
         decoration: InputDecoration(
           hintText: 'Search users, dealers, products...',
-          hintStyle: const TextStyle(color: Color(0xFF9B92C9)),
-          prefixIcon: const Icon(Icons.search, size: 20),
+          hintStyle: AppTextStyles.caption,
+          prefixIcon: const Icon(
+            Icons.search,
+            size: 20,
+            color: AppColors.textSecondary,
+          ),
           filled: true,
           fillColor: const Color(0xFF292348),
           border: OutlineInputBorder(
@@ -52,7 +63,6 @@ class _SearchBar extends StatelessWidget {
           ),
           contentPadding: EdgeInsets.zero,
         ),
-        style: const TextStyle(color: Colors.white),
       ),
     );
   }

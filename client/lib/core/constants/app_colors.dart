@@ -9,9 +9,13 @@ class AppColors {
 
   static const surfaceDark = Color(0xFF1E1933);
   static const surfaceBorder = Color(0xFF3B3267);
+  static const surfaceLight = Color(0xFFFFFFFF);
 
   static const textPrimaryDark = Colors.white;
   static const textPrimaryLight = Color(0xFF0F172A);
 
+  static const borderDark = Color(0xFF2E294E);
+
   static const textSecondary = Color(0xFF9B92C9);
+  static const textPrimary = Colors.white;
 }

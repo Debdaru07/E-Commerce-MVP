@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../core/routing/app_routes.dart';
-import '../../../presentation/components/buttons/primary_button.dart';
+import '../../../../core/routing/app_routes.dart';
+import '../../../../presentation/components/buttons/primary_button.dart';
 
 class LoginConsumerPage extends StatelessWidget {
   const LoginConsumerPage({super.key});

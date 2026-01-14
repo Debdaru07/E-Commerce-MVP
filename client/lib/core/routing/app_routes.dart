@@ -1,16 +1,19 @@
 class AppRoutes {
-  // Public
+  // 🌍 Public
   static const landing = '/';
 
-  // Auth
-  static const loginChoice = '/login';
-  static const loginConsumer = '/login/consumer';
-  static const loginDealer = '/login/dealer';
-  static const signupConsumer = '/sign-up/consumer';
-  static const signupDealer = '/sign-up/dealer';
-  static const loginConsumerPage = '/login/consumer';
+  // 🔐 Auth – Consumer
+  static const loginConsumer = '/auth/consumer/login';
+  static const signupConsumer = '/auth/consumer/signup';
 
-  // Apps
+  // 🔐 Auth – Dealer
+  static const loginDealer = '/auth/dealer/login';
+  static const signupDealer = '/auth/dealer/signup';
+
+  // 🔐 Auth – Admin (HARD-CODED / hidden)
+  static const loginAdmin = '/auth/admin/login';
+
+  // 🚀 Apps
   static const consumerApp = '/consumer';
   static const dealerDashboard = '/dealer';
   static const adminDashboard = '/admin';

@@ -24,24 +24,29 @@ class ProductDetailsPage extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final isDesktop = constraints.maxWidth > 900;
+                final isDesktop = constraints.maxWidth >= 900;
 
-                return isDesktop
-                    ? Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(flex: 7, child: _Gallery(product)),
-                          const SizedBox(width: 48),
-                          Expanded(flex: 5, child: _ProductInfo(product)),
-                        ],
-                      )
-                    : ListView(
-                        children: [
-                          _Gallery(product),
-                          const SizedBox(height: 24),
-                          _ProductInfo(product),
-                        ],
-                      );
+                if (isDesktop) {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(flex: 7, child: _Gallery(product)),
+                      const SizedBox(width: 48),
+                      Expanded(
+                        flex: 5,
+                        child: _StickyProductInfo(product),
+                      ),
+                    ],
+                  );
+                }
+
+                return ListView(
+                  children: [
+                    _Gallery(product),
+                    const SizedBox(height: 32),
+                    _ProductInfo(product),
+                  ],
+                );
               },
             ),
           ),
@@ -50,6 +55,10 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   Gallery                                  */
+/* -------------------------------------------------------------------------- */
 
 class _Gallery extends StatelessWidget {
   final ProductUIModel product;
@@ -74,15 +83,21 @@ class _Gallery extends StatelessWidget {
         Row(
           children: List.generate(
             4,
-            (_) => Expanded(
+            (index) => Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(right: 12),
+                padding: EdgeInsets.only(right: index == 3 ? 0 : 12),
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors.surfaceDark,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(14),
+                      border: index == 0
+                          ? Border.all(
+                              color: AppColors.primary,
+                              width: 2,
+                            )
+                          : null,
                     ),
                   ),
                 ),
@@ -95,6 +110,30 @@ class _Gallery extends StatelessWidget {
   }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                              Sticky Product Info                            */
+/* -------------------------------------------------------------------------- */
+
+class _StickyProductInfo extends StatelessWidget {
+  final ProductUIModel product;
+
+  const _StickyProductInfo(this.product);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        _ProductInfo(product),
+      ],
+    );
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                               Product Details                               */
+/* -------------------------------------------------------------------------- */
+
 class _ProductInfo extends StatelessWidget {
   final ProductUIModel product;
 
@@ -105,44 +144,63 @@ class _ProductInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        /// Category / Tag
         Text(
           'Wireless Mechanical',
           style: AppTextStyles.labelSmall.copyWith(
             color: AppColors.primary,
+            letterSpacing: 0.8,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
+
+        /// Title
         Text(
           product.name,
-          style: AppTextStyles.heading,
+          style: AppTextStyles.heading.copyWith(
+            fontSize: 32,
+            height: 1.2,
+          ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 16),
+
+        /// Price Row
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               '\$${product.price.toStringAsFixed(0)}',
-              style: AppTextStyles.display.copyWith(fontSize: 32),
+              style: AppTextStyles.display.copyWith(fontSize: 36),
             ),
             if (product.oldPrice != null) ...[
               const SizedBox(width: 12),
-              Text(
-                '\$${product.oldPrice}',
-                style: AppTextStyles.caption.copyWith(
-                  decoration: TextDecoration.lineThrough,
+              Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: Text(
+                  '\$${product.oldPrice}',
+                  style: AppTextStyles.caption.copyWith(
+                    decoration: TextDecoration.lineThrough,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ],
           ],
         ),
         const SizedBox(height: 24),
+
+        /// Description
         Text(
-          'Experience premium build quality with next-gen performance and stunning design.',
-          style: AppTextStyles.body,
+          'Experience the ultimate typing precision with premium materials, '
+          'next-gen performance, and a refined sound profile.',
+          style: AppTextStyles.body.copyWith(height: 1.6),
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 36),
+
+        /// CTA Buttons
         _PrimaryButton(
           label: 'Add to Cart',
-          icon: Icons.shopping_bag,
+          icon: Icons.shopping_bag_outlined,
           onTap: () {},
         ),
         const SizedBox(height: 12),
@@ -154,6 +212,10 @@ class _ProductInfo extends StatelessWidget {
     );
   }
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                   Buttons                                   */
+/* -------------------------------------------------------------------------- */
 
 class _PrimaryButton extends StatelessWidget {
   final String label;
@@ -170,15 +232,18 @@ class _PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
+      height: 56,
       child: ElevatedButton.icon(
         onPressed: onTap,
-        icon: Icon(icon),
+        icon: Icon(icon, size: 20),
         label: Text(label),
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 18),
+          backgroundColor: AppColors.primary,
+          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
+          textStyle: AppTextStyles.caption.copyWith(fontSize: 16),
         ),
       ),
     );
@@ -189,14 +254,25 @@ class _SecondaryButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _SecondaryButton({required this.label, required this.onTap});
+  const _SecondaryButton({
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
+      height: 56,
       child: OutlinedButton(
         onPressed: onTap,
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: Colors.grey.shade700),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          textStyle: AppTextStyles.caption.copyWith(fontSize: 16),
+        ),
         child: Text(label),
       ),
     );

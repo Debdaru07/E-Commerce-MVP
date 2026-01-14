@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
+import '../../core/routing/app_routes.dart';
 
 class CTASection extends StatelessWidget {
   const CTASection({super.key});
@@ -15,19 +16,20 @@ class CTASection extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           color: Theme.of(context).colorScheme.primary,
         ),
-        child: const Row(
+        child: Row( // ❌ removed const
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
+            const Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Ready to get started?',
                     style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white),
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   SizedBox(height: 12),
                   Text(
@@ -39,9 +41,29 @@ class CTASection extends StatelessWidget {
             ),
             Row(
               children: [
-                PrimaryButton(text: 'Start Free Trial'),
-                SizedBox(width: 12),
-                OutlineButtonWidget(text: 'Contact Sales'),
+                // ✅ PRIMARY CTA → CONSUMER SIGNUP
+                PrimaryButton(
+                  text: 'Start Free Trial',
+                  onPressed: () {
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.signupConsumer,
+                    );
+                  },
+                ),
+
+                const SizedBox(width: 12),
+
+                // ✅ SECONDARY CTA
+                SizedBox(
+                  width: 160,
+                  child: OutlineButtonWidget(
+                    text: 'Contact Sales',
+                    onPressed: () {
+                      // TODO: later → contact form / email / modal
+                    },
+                  ),
+                ),
               ],
             ),
           ],

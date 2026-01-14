@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+
+import 'core/theme/theme_provider.dart';
+import 'data/services/waitlist_service.dart';
+import 'providers/waitlist_provider.dart';
 import 'app.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const App());
+
+  setUrlStrategy(PathUrlStrategy());
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (_) => WaitlistProvider(WaitlistService()),
+        ),
+      ],
+      child: const App(), // ✅ THIS IS THE KEY
+    ),
+  );
 }

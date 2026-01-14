@@ -19,11 +19,11 @@ class SocialProofSection extends StatelessWidget {
                 ),
           ),
           const SizedBox(height: 32),
-          Wrap(
+          const Wrap(
             alignment: WrapAlignment.center,
             spacing: 40,
             runSpacing: 24,
-            children: const [
+            children: [
               _Logo(name: 'Acme', icon: LucideIcons.gem),
               _Logo(name: 'Energy', icon: LucideIcons.zap),
               _Logo(name: 'Token', icon: LucideIcons.coins),

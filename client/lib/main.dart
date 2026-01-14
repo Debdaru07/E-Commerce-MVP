@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
@@ -7,8 +8,9 @@ import 'data/services/waitlist_service.dart';
 import 'providers/waitlist_provider.dart';
 import 'app.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
 
   setUrlStrategy(PathUrlStrategy());
 

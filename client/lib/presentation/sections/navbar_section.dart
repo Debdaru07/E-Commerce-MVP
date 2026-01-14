@@ -6,7 +6,6 @@ import '../components/buttons/outline_button.dart';
 import '../../core/theme/theme_provider.dart';
 import '../../core/routing/app_routes.dart';
 
-
 class NavbarSection extends StatelessWidget {
   final bool scrolled;
 
@@ -68,11 +67,7 @@ class NavbarSection extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-
-                    if (isDesktop)
-                      const _DesktopNav()
-                    else
-                      const _MobileNav(),
+                    if (isDesktop) const _DesktopNav() else const _MobileNav(),
                   ],
                 );
               },
@@ -93,11 +88,11 @@ class _DesktopNav extends StatelessWidget {
 
     return Row(
       children: [
-        TextButton(onPressed: null, child: const Text('Features')),
+        const TextButton(onPressed: null, child: Text('Features')),
         const SizedBox(width: 16),
-        TextButton(onPressed: null, child: const Text('Pricing')),
+        const TextButton(onPressed: null, child: Text('Pricing')),
         const SizedBox(width: 16),
-        TextButton(onPressed: null, child: const Text('About')),
+        const TextButton(onPressed: null, child: Text('About')),
         const SizedBox(width: 16),
 
         // 🌗 Theme toggle
@@ -115,25 +110,25 @@ class _DesktopNav extends StatelessWidget {
 
         const SizedBox(width: 16),
         OutlineButtonWidget(
-  text: 'Sign In',
-  onPressed: () {
-    Navigator.pushNamed(
-      context,
-      AppRoutes.loginConsumer,
-    );
-  },
-),
+          text: 'Sign In',
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.loginConsumer,
+            );
+          },
+        ),
 
         const SizedBox(width: 12),
         PrimaryButton(
-  text: 'Get Started',
-  onPressed: () {
-    Navigator.pushNamed(
-      context,
-      AppRoutes.signupConsumer,
-    );
-  },
-),  
+          text: 'Get Started',
+          onPressed: () {
+            Navigator.pushNamed(
+              context,
+              AppRoutes.signupConsumer,
+            );
+          },
+        ),
       ],
     );
   }

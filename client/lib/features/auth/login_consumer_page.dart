@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../core/routing/app_routes.dart';
 import '../../../presentation/components/buttons/primary_button.dart';
 
-class LoginDealerPage extends StatelessWidget {
-  const LoginDealerPage({super.key});
+class LoginConsumerPage extends StatelessWidget {
+  const LoginConsumerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class LoginDealerPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(
-                          Icons.storefront_rounded,
+                          Icons.layers_rounded,
                           color: theme.colorScheme.primary,
                           size: 32,
                         ),
@@ -66,7 +66,7 @@ class LoginDealerPage extends StatelessWidget {
                       const SizedBox(height: 20),
 
                       Text(
-                        'Dealer Login',
+                        'Welcome back',
                         style: theme.textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
@@ -74,7 +74,7 @@ class LoginDealerPage extends StatelessWidget {
                       const SizedBox(height: 8),
 
                       Text(
-                        'Sign in to manage your business account.',
+                        'Please enter your details to sign in.',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(color: theme.hintColor),
@@ -85,7 +85,7 @@ class LoginDealerPage extends StatelessWidget {
                       // 📧 Email
                       TextFormField(
                         decoration: const InputDecoration(
-                          labelText: 'Business email',
+                          labelText: 'Email address',
                           prefixIcon: Icon(Icons.mail_outline),
                         ),
                       ),
@@ -113,35 +113,87 @@ class LoginDealerPage extends StatelessWidget {
 
                       const SizedBox(height: 12),
 
-                      // 🔑 Dealer Sign In
+                      // 🔑 Sign In
                       PrimaryButton(
-                        text: 'Sign In as Dealer',
+                        text: 'Sign In',
                         onPressed: () {
                           Navigator.pushReplacementNamed(
                             context,
-                            AppRoutes.dealerDashboard,
+                            AppRoutes.consumerApp,
                           );
                         },
                       ),
 
+                      const SizedBox(height: 24),
+
+                      // ───── Divider ─────
+                      Row(
+                        children: [
+                          const Expanded(child: Divider()),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: Text(
+                              'Or continue with',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                          const Expanded(child: Divider()),
+                        ],
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // 🌐 Social buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.g_mobiledata),
+                              label: const Text('Google'),
+                              onPressed: () {},
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: OutlinedButton.icon(
+                              icon: const Icon(Icons.code),
+                              label: const Text('GitHub'),
+                              onPressed: () {},
+                            ),
+                          ),
+                        ],
+                      ),
+
                       const SizedBox(height: 28),
 
-                      // 🔁 Switch to consumer login
+                      // 🔁 Switch actions
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 6,
                         children: [
-                          const Text('Not a dealer?'),
+                          const Text("Don't have an account?"),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushReplacementNamed(
+                              Navigator.pushNamed(
                                 context,
-                                AppRoutes.loginConsumer,
+                                AppRoutes.signupConsumer,
                               );
                             },
-                            child: const Text('Login as Consumer'),
+                            child: const Text('Sign up for free'),
                           ),
                         ],
+                      ),
+
+                      const SizedBox(height: 8),
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            AppRoutes.loginDealer,
+                          );
+                        },
+                        child: const Text('Login as Dealer'),
                       ),
                     ],
                   ),

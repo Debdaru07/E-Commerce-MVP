@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
 import '../../core/theme/theme_provider.dart';
+import '../../core/routing/app_routes.dart';
+
 
 class NavbarSection extends StatelessWidget {
   final bool scrolled;
@@ -112,9 +114,26 @@ class _DesktopNav extends StatelessWidget {
         ),
 
         const SizedBox(width: 16),
-        const OutlineButtonWidget(text: 'Sign In'),
+        OutlineButtonWidget(
+  text: 'Sign In',
+  onPressed: () {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.loginConsumer,
+    );
+  },
+),
+
         const SizedBox(width: 12),
-        const PrimaryButton(text: 'Get Started'),
+        PrimaryButton(
+  text: 'Get Started',
+  onPressed: () {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.signupConsumer,
+    );
+  },
+),  
       ],
     );
   }

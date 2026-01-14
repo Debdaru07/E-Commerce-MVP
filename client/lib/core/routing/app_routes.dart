@@ -6,8 +6,9 @@ class AppRoutes {
   static const loginChoice = '/login';
   static const loginConsumer = '/login/consumer';
   static const loginDealer = '/login/dealer';
-  static const signupConsumer = '/signup/consumer';
-  static const signupDealer = '/signup/dealer';
+  static const signupConsumer = '/sign-up/consumer';
+  static const signupDealer = '/sign-up/dealer';
+  static const loginConsumerPage = '/login/consumer';
 
   // Apps
   static const consumerApp = '/consumer';

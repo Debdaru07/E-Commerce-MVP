@@ -1,46 +1,43 @@
-// lib/services/auth_service.dart
 import 'dart:convert';
 import 'package:http/http.dart';
-
+import '../config/env.dart';
 import '../network/api_client.dart';
-import '../network/api_endpoints.dart';
 import '../network/api_exceptions.dart';
 
 enum UserRole { admin, dealer, consumer }
 
 class AuthService {
+  /// LOGIN
   static Future<String> login({
     required UserRole role,
     required String email,
     required String password,
-    String? fullName,
   }) async {
     late Response response;
 
     final body = {
       'email': email,
       'password': password,
-      if (fullName != null) 'full_name': fullName,
     };
 
     switch (role) {
       case UserRole.admin:
         response = await ApiClient.post(
-          ApiEndpoints.adminLogin,
+          Env.adminLogin,
           body: body,
         );
         break;
 
       case UserRole.dealer:
         response = await ApiClient.post(
-          ApiEndpoints.dealerLogin,
+          Env.dealerLogin,
           body: body,
         );
         break;
 
       case UserRole.consumer:
         response = await ApiClient.post(
-          ApiEndpoints.consumerLogin,
+          Env.consumerLogin,
           body: body,
         );
         break;
@@ -52,6 +49,47 @@ class AuthService {
       return data['access_token'];
     } else {
       throw ApiException(data['message'] ?? 'Login failed');
+    }
+  }
+
+  /// SIGNUP
+  static Future<void> signup({
+    required UserRole role,
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    late Response response;
+
+    final body = {
+      'email': email,
+      'password': password,
+      'full_name': fullName,
+    };
+
+    switch (role) {
+      case UserRole.dealer:
+        response = await ApiClient.post(
+          Env.dealerSignup,
+          body: body,
+        );
+        break;
+
+      case UserRole.consumer:
+        response = await ApiClient.post(
+          Env.consumerSignup,
+          body: body,
+        );
+        break;
+
+      default:
+        throw ApiException('Unsupported role');
+    }
+
+    final data = jsonDecode(response.body);
+
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw ApiException(data['message'] ?? 'Signup failed');
     }
   }
 }

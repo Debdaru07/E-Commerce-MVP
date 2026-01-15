@@ -7,4 +7,7 @@ class Env {
   static String get adminLogin => dotenv.env['ADMIN_LOGIN']!;
   static String get dealerLogin => dotenv.env['DEALER_LOGIN']!;
   static String get consumerLogin => dotenv.env['CONSUMER_LOGIN']!;
+
+  static String get dealerSignup => dotenv.env['DEALER_SIGNUP']!;
+  static String get consumerSignup => dotenv.env['CONSUMER_SIGNUP']!;
 }

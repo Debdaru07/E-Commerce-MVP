@@ -1,7 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/routing/app_routes.dart';
+import '../../../core/services/auth_service.dart';
 import '../../../presentation/components/buttons/primary_button.dart';
+import '../../../presentation/utils/ui_feedback.dart';
+import '../providers/auth_provider.dart';
 
 class SignupConsumerPage extends StatefulWidget {
   const SignupConsumerPage({super.key});
@@ -13,14 +18,38 @@ class SignupConsumerPage extends StatefulWidget {
 class _SignupConsumerPageState extends State<SignupConsumerPage> {
   bool agreeToTerms = false;
 
+  // ✅ Controllers (NON-NULL)
+  late final TextEditingController fullNameCtrl;
+  late final TextEditingController emailCtrl;
+  late final TextEditingController passwordCtrl;
+  late final TextEditingController confirmPasswordCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    fullNameCtrl = TextEditingController();
+    emailCtrl = TextEditingController();
+    passwordCtrl = TextEditingController();
+    confirmPasswordCtrl = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    fullNameCtrl.dispose();
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final auth = context.watch<AuthProvider>();
 
     return Scaffold(
       body: Stack(
         children: [
-          // 🌈 Ambient background glows
           Positioned(
             top: -120,
             left: -120,
@@ -31,7 +60,6 @@ class _SignupConsumerPageState extends State<SignupConsumerPage> {
             right: -150,
             child: _Glow(color: Colors.indigo.withOpacity(0.08)),
           ),
-
           Center(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(vertical: 48),
@@ -58,85 +86,34 @@ class _SignupConsumerPageState extends State<SignupConsumerPage> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // 🔰 Logo
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.primary.withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            Icons.layers_rounded,
-                            color: theme.colorScheme.primary,
-                            size: 32,
-                          ),
-                        ),
-
-                        const SizedBox(height: 20),
-
-                        Text(
-                          'Create an account',
-                          style: theme.textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        Text(
-                          'Start your 14-day free trial. No credit card required.',
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodyMedium
-                              ?.copyWith(color: theme.hintColor),
-                        ),
-
+                        _buildHeader(theme),
                         const SizedBox(height: 28),
-
-                        // 👤 Full name
-                        const _InputField(
+                        _InputField(
+                          controller: fullNameCtrl,
                           label: 'Full name',
                           icon: Icons.person_outline,
                         ),
-
                         const SizedBox(height: 16),
-
-                        // 📧 Email
-                        const _InputField(
+                        _InputField(
+                          controller: emailCtrl,
                           label: 'Email address',
                           icon: Icons.mail_outline,
                         ),
-
                         const SizedBox(height: 16),
-
-                        // 🔒 Password
-                        const _InputField(
+                        _InputField(
+                          controller: passwordCtrl,
                           label: 'Password',
                           icon: Icons.lock_outline,
                           obscure: true,
                         ),
-
-                        const SizedBox(height: 8),
-
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'Must be at least 8 characters',
-                            style: theme.textTheme.bodySmall
-                                ?.copyWith(color: theme.hintColor),
-                          ),
-                        ),
-
                         const SizedBox(height: 16),
-
-                        // 🔒 Confirm password
-                        const _InputField(
+                        _InputField(
+                          controller: confirmPasswordCtrl,
                           label: 'Confirm password',
                           icon: Icons.lock_outline,
                           obscure: true,
                         ),
-
                         const SizedBox(height: 20),
-
-                        // ☑️ Terms
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -146,101 +123,55 @@ class _SignupConsumerPageState extends State<SignupConsumerPage> {
                                 setState(() => agreeToTerms = v ?? false);
                               },
                             ),
-                            Expanded(
+                            const Expanded(
                               child: Padding(
-                                padding: const EdgeInsets.only(top: 6),
+                                padding: EdgeInsets.only(top: 6),
                                 child: Text(
                                   'I agree to the Terms of Service and Privacy Policy.',
-                                  style: theme.textTheme.bodySmall,
                                 ),
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 20),
-
-                        // 🚀 Create account
                         PrimaryButton(
-                          text: 'Create account',
+                          text:
+                              auth.isLoading ? 'Creating...' : 'Create account',
                           onPressed: agreeToTerms
-                              ? () {
-                                  // TODO: signup logic
+                              ? () async {
+                                  if (passwordCtrl.text !=
+                                      confirmPasswordCtrl.text) {
+                                    UIFeedback.showSnackBar(
+                                      context,
+                                      'Passwords do not match',
+                                    );
+                                    return;
+                                  }
+
+                                  final success = await auth.signup(
+                                    role: UserRole.consumer,
+                                    email: emailCtrl.text.trim(),
+                                    password: passwordCtrl.text.trim(),
+                                    fullName: fullNameCtrl.text.trim(),
+                                  );
+
+                                  if (!context.mounted) return;
+
+                                  if (success) {
+                                    UIFeedback.showToast(
+                                        'Account created successfully');
+                                    Navigator.pushReplacementNamed(
+                                      context,
+                                      AppRoutes.loginConsumer,
+                                    );
+                                  } else {
+                                    UIFeedback.showSnackBar(
+                                      context,
+                                      auth.error ?? 'Signup failed',
+                                    );
+                                  }
                                 }
                               : null,
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        // ───── Divider ─────
-                        Row(
-                          children: [
-                            const Expanded(child: Divider()),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 12),
-                              child: Text(
-                                'Or sign up with',
-                                style: theme.textTheme.bodySmall,
-                              ),
-                            ),
-                            const Expanded(child: Divider()),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        // 🌐 Social signup
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                icon: const Icon(Icons.g_mobiledata),
-                                label: const Text('Google'),
-                                onPressed: () {},
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: OutlinedButton.icon(
-                                icon: const Icon(Icons.code),
-                                label: const Text('GitHub'),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 28),
-
-                        // 🔁 Login links
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: [
-                            const Text('Already have an account?'),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  AppRoutes.loginConsumer,
-                                );
-                              },
-                              child: const Text('Sign in'),
-                            ),
-                          ],
-                        ),
-
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushReplacementNamed(
-                              context,
-                              AppRoutes.signupDealer,
-                            );
-                          },
-                          child: const Text(
-                            'Are you a business or dealer? Sign up here',
-                          ),
                         ),
                       ],
                     ),
@@ -253,23 +184,58 @@ class _SignupConsumerPageState extends State<SignupConsumerPage> {
       ),
     );
   }
+
+  Widget _buildHeader(ThemeData theme) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Icon(
+            Icons.layers_rounded,
+            color: theme.colorScheme.primary,
+            size: 32,
+          ),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'Create an account',
+          style: theme.textTheme.headlineSmall
+              ?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Start your 14-day free trial. No credit card required.',
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium?.copyWith(color: theme.hintColor),
+        ),
+      ],
+    );
+  }
 }
 
-/// 🔹 Reusable input
+/// ✅ Controller-based InputField (SAFE)
 class _InputField extends StatelessWidget {
+  final TextEditingController controller;
   final String label;
   final IconData icon;
   final bool obscure;
 
   const _InputField({
+    required this.controller,
     required this.label,
     required this.icon,
     this.obscure = false,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       obscureText: obscure,
       decoration: InputDecoration(
         labelText: label,

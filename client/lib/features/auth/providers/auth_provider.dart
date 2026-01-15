@@ -15,26 +15,47 @@ class AuthProvider extends ChangeNotifier {
     required UserRole role,
     required String email,
     required String password,
-    String? fullName,
   }) async {
     _setLoading(true);
     _error = null;
 
     try {
-      final token = await AuthService.login(
+      _token = await AuthService.login(
+        role: role,
+        email: email,
+        password: password,
+      );
+      return true;
+    } catch (e) {
+      _error = e.toString().replaceFirst('Exception: ', '');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  Future<bool> signup({
+    required UserRole role,
+    required String email,
+    required String password,
+    required String fullName,
+  }) async {
+    _setLoading(true);
+    _error = null;
+
+    try {
+      await AuthService.signup(
         role: role,
         email: email,
         password: password,
         fullName: fullName,
       );
-
-      _token = token;
-      _setLoading(false);
       return true;
     } catch (e) {
-      _error = e.toString();
-      _setLoading(false);
+      _error = e.toString().replaceFirst('Exception: ', '');
       return false;
+    } finally {
+      _setLoading(false);
     }
   }
 

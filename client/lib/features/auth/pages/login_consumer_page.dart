@@ -1,14 +1,34 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../../../core/routing/app_routes.dart';
 import '../../../../presentation/components/buttons/primary_button.dart';
+import '../../../core/services/auth_service.dart';
+import '../providers/auth_provider.dart';
 
-class LoginConsumerPage extends StatelessWidget {
+class LoginConsumerPage extends StatefulWidget {
   const LoginConsumerPage({super.key});
+
+  @override
+  State<LoginConsumerPage> createState() => _LoginConsumerPageState();
+}
+
+class _LoginConsumerPageState extends State<LoginConsumerPage> {
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final auth = context.watch<AuthProvider>();
 
     return Scaffold(
       body: Stack(
@@ -43,7 +63,7 @@ class LoginConsumerPage extends StatelessWidget {
                       BoxShadow(
                         blurRadius: 40,
                         color: Colors.black.withOpacity(0.15),
-                      )
+                      ),
                     ],
                   ),
                   child: Column(
@@ -84,6 +104,7 @@ class LoginConsumerPage extends StatelessWidget {
 
                       // 📧 Email
                       TextFormField(
+                        controller: emailCtrl,
                         decoration: const InputDecoration(
                           labelText: 'Email address',
                           prefixIcon: Icon(Icons.mail_outline),
@@ -94,6 +115,7 @@ class LoginConsumerPage extends StatelessWidget {
 
                       // 🔒 Password
                       TextFormField(
+                        controller: passwordCtrl,
                         obscureText: true,
                         decoration: const InputDecoration(
                           labelText: 'Password',
@@ -115,13 +137,33 @@ class LoginConsumerPage extends StatelessWidget {
 
                       // 🔑 Sign In
                       PrimaryButton(
-                        text: 'Sign In',
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.consumerApp,
-                          );
-                        },
+                        text: auth.isLoading ? 'Signing in...' : 'Sign In',
+                        onPressed: auth.isLoading
+                            ? null
+                            : () async {
+                                final success = await auth.login(
+                                  role: UserRole.consumer,
+                                  email: emailCtrl.text.trim(),
+                                  password: passwordCtrl.text.trim(),
+                                );
+
+                                if (!mounted) return;
+
+                                if (success) {
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    AppRoutes.consumerApp,
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        auth.error ?? 'Login failed',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
                       ),
 
                       const SizedBox(height: 24),

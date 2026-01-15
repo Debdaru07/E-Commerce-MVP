@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../../../presentation/components/buttons/primary_button.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../presentation/utils/ui_feedback.dart';
 import '../providers/auth_provider.dart';
 
 class LoginConsumerPage extends StatefulWidget {
@@ -136,6 +137,7 @@ class _LoginConsumerPageState extends State<LoginConsumerPage> {
                       const SizedBox(height: 12),
 
                       // 🔑 Sign In
+
                       PrimaryButton(
                         text: auth.isLoading ? 'Signing in...' : 'Sign In',
                         onPressed: auth.isLoading
@@ -147,20 +149,18 @@ class _LoginConsumerPageState extends State<LoginConsumerPage> {
                                   password: passwordCtrl.text.trim(),
                                 );
 
-                                if (!mounted) return;
+                                if (!context.mounted) return;
 
                                 if (success) {
+                                  UIFeedback.showToast('Login successful');
                                   Navigator.pushReplacementNamed(
                                     context,
                                     AppRoutes.consumerApp,
                                   );
                                 } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(
-                                        auth.error ?? 'Login failed',
-                                      ),
-                                    ),
+                                  UIFeedback.showSnackBar(
+                                    context,
+                                    auth.error ?? 'Login failed',
                                   );
                                 }
                               },

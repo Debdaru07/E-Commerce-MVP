@@ -25,7 +25,6 @@ class AuthProvider extends ChangeNotifier {
         role: role,
         email: email,
         password: password,
-        fullName: fullName,
       );
 
       _token = token;

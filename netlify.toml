@@ -1,0 +1,15 @@
+[build]
+  base = "client"
+  command = "bash ../scripts/netlify_flutter_build.sh"
+  publish = "build/web"
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+
+
+
+
+
+

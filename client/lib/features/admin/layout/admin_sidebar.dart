@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_text_styles.dart';
+import '../../../core/routing/app_routes.dart';
+import '../../auth/providers/auth_provider.dart';
 import '../widgets/sidebar_menu_item.dart';
 import 'admin_tabs.dart';
 
@@ -181,12 +184,46 @@ class _SidebarProfile extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.more_vert,
-            color: AppColors.textSecondary,
+
+          /// 👇 Logout menu
+          PopupMenuButton<String>(
+            icon: const Icon(
+              Icons.more_vert,
+              color: AppColors.textSecondary,
+            ),
+            onSelected: (value) async {
+              if (value == 'logout') {
+                await _handleLogout(context);
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout, size: 18),
+                    SizedBox(width: 8),
+                    Text('Logout'),
+                  ],
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final authProvider = context.read<AuthProvider>();
+
+    await authProvider.logout();
+
+    if (context.mounted) {
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        AppRoutes.loginAdmin,
+        (route) => false,
+      );
+    }
   }
 }

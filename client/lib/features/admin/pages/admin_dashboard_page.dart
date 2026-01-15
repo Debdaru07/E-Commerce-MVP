@@ -30,7 +30,6 @@ class AdminDashboardPage extends StatelessWidget {
     switch (tab) {
       case AdminTab.dashboard:
         return const _DashboardContent();
-
       case AdminTab.users:
         return const UsersManagementPage();
       case AdminTab.dealers:

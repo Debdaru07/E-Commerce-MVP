@@ -229,7 +229,6 @@ class _InputField extends StatelessWidget {
     required this.label,
     required this.icon,
     this.obscure = false,
-    super.key,
   });
 
   @override

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'auth_gate.dart';
 import 'core/routing/app_router.dart';
-import 'core/routing/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_provider.dart';
 
@@ -15,14 +15,10 @@ class App extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
-      // 🎨 Theme
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeProvider.themeMode,
-
-      // 🚦 CENTRAL ROUTING (ONLY THIS)
-      initialRoute: AppRoutes.landing,
+      home: const AuthGate(),
       onGenerateRoute: AppRouter.generate,
     );
   }

@@ -8,5 +8,8 @@ export PATH="$PATH:`pwd`/flutter/bin"
 
 flutter doctor
 flutter config --enable-web
+
 flutter pub get
-flutter build web --release
+
+# 🔥 FORCE HTML RENDERER
+flutter build web --release --web-renderer html

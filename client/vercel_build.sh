@@ -11,4 +11,11 @@ flutter pub get
 
 # ✅ CORRECT FOR FLUTTER 3.38+
 flutter build web --release \
-  --dart-define=FLUTTER_WEB_RENDERER=html
+  --dart-define=BASE_URL=$BASE_URL \
+  --dart-define=ADMIN_LOGIN=$ADMIN_LOGIN \
+  --dart-define=DEALER_LOGIN=$DEALER_LOGIN \
+  --dart-define=CONSUMER_LOGIN=$CONSUMER_LOGIN \
+  --dart-define=DEALER_SIGNUP=$DEALER_SIGNUP \
+  --dart-define=CONSUMER_SIGNUP=$CONSUMER_SIGNUP \
+  --dart-define=FLUTTER_WEB_RENDERER=html \
+  --no-wasm-dry-run

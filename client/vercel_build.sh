@@ -1,15 +1,15 @@
 #!/bin/bash
 set -e
 
-echo "🔧 Installing Flutter SDK"
+echo "Installing Flutter SDK"
 git clone https://github.com/flutter/flutter.git -b stable --depth 1
 
-export PATH="$PATH:$(pwd)/../flutter/bin"
+export PATH="$PATH:`pwd`/flutter/bin"
 
 flutter config --enable-web
 flutter pub get
 
-echo "🚀 Building Flutter Web"
+# ✅ CORRECT FOR FLUTTER 3.38+
 flutter build web --release \
   --dart-define=BASE_URL=$BASE_URL \
   --dart-define=ADMIN_LOGIN=$ADMIN_LOGIN \

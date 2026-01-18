@@ -1,19 +1,23 @@
 import { Router } from 'express'
-import { loginAdmin } from '../../controllers/auth/admin.controller.js'
+import {
+  loginAdmin,
+  getAdminProfile
+} from '../../controllers/auth/admin.controller.js'
+
+import { verifyToken } from '../../middleware/auth.js'
+import { requireRole } from '../../middleware/role.js'
 
 const router = Router()
 
-
+// ADMIN LOGIN
 router.post('/login', loginAdmin)
 
-
-
-/**
- * ADMIN LOGIN ONLY
- * No signup route (as per design)
- */
-//router.post('/login', async (req, res) => {
-  //res.json({ message: 'Admin login route working' })
-//})
+// ADMIN PROFILE
+router.get(
+  '/me',
+  verifyToken,
+  requireRole('ADMIN'),
+  getAdminProfile
+)
 
 export default router

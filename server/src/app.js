@@ -5,6 +5,7 @@ import categoryRoutes from './routes/category.routes.js'
 import consumerRoutes from './routes/auth/consumer.routes.js'
 import dealerRoutes from './routes/auth/dealer.routes.js'
 import adminRoutes from './routes/auth/admin.routes.js'
+import userRoutes from './routes/user.routes.js'
 
 import productRoutes from './routes/products.routes.js'
 import orderRoutes from './routes/orders.routes.js'
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 app.use('/auth/consumer', consumerRoutes)
 app.use('/auth/dealer', dealerRoutes)
 app.use('/auth/admin', adminRoutes)
+app.use('/api/user', userRoutes) 
 
 app.use('/products', productRoutes)
 app.use('/orders', orderRoutes)

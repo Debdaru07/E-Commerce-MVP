@@ -1,5 +1,4 @@
-import supabase from '../config/supabase.js'
-
+import  supabase  from '../config/supabase.js'
 
 export const verifyToken = async (req, res, next) => {
   try {
@@ -14,18 +13,16 @@ export const verifyToken = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ error: 'Token missing' })
     }
-
-    // Verify token with Supabase
+    
     const { data, error } = await supabase.auth.getUser(token)
 
     if (error || !data?.user) {
       return res.status(401).json({ error: 'Invalid or expired token' })
     }
 
-    // Fetch user profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .select('role, is_active')
+      .select('role, full_name, is_active, email')
       .eq('id', data.user.id)
       .single()
 
@@ -37,10 +34,11 @@ export const verifyToken = async (req, res, next) => {
       return res.status(403).json({ error: 'Account disabled' })
     }
 
-    // Attach user to request
     req.user = {
       id: data.user.id,
-      role: profile.role
+      role: profile.role,
+      full_name: profile.full_name,
+      email: profile.email
     }
 
     next()

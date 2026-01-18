@@ -1,7 +1,6 @@
-import supabase from '../../config/supabase.js'
+import  supabase  from '../../config/supabase.js'
 
 export const loginAdmin = async (req, res) => {
-  // 🛡️ SAFETY GUARD (CRITICAL)
   if (!req.body) {
     return res.status(400).json({
       error: 'Request body missing or invalid JSON'
@@ -56,4 +55,12 @@ export const loginAdmin = async (req, res) => {
     console.error(err)
     res.status(500).json({ error: 'Server error' })
   }
+}
+
+// ✅ NEW: GET LOGGED-IN ADMIN DETAILS
+export const getAdminProfile = async (req, res) => {
+  res.json({
+    success: true,
+    data: req.user
+  })
 }

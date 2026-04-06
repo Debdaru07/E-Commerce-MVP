@@ -2,9 +2,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../core/routing/app_routes.dart';
+import '../../../../shared/models/user_role.dart';
+import '../../../../shared/routing/app_routes.dart';
 import '../../../../presentation/components/buttons/primary_button.dart';
-import '../../../core/services/auth_service.dart';
 import '../providers/auth_provider.dart';
 
 class LoginAdminPage extends StatefulWidget {

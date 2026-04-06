@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import '../data/services/waitlist_service.dart';
+import '../domain/repositories/waitlist_repository.dart';
 
 class WaitlistProvider extends ChangeNotifier {
-  final WaitlistService _service;
+  final WaitlistRepository _repository;
 
-  WaitlistProvider(this._service);
+  WaitlistProvider(this._repository);
 
   bool isLoading = false;
   bool isSubmitted = false;
@@ -13,7 +13,7 @@ class WaitlistProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    await _service.submit(email);
+    await _repository.submitWaitlist(email: email);
 
     isLoading = false;
     isSubmitted = true;

@@ -1,251 +1,377 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../presentation/utils/ui_feedback.dart';
+import '../../../../data/models/category_model.dart';
+import '../../../../domain/repositories/category_repository.dart';
+import '../../../../features/auth/providers/auth_provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_text_styles.dart';
-import '../../widgets/management_header.dart';
-import '../../widgets/status_pill.dart';
-
-class CategoryManagementPage extends StatelessWidget {
+class CategoryManagementPage extends StatefulWidget {
   const CategoryManagementPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  State<CategoryManagementPage> createState() => _CategoryManagementPageState();
+}
 
-    return Container(
-      color: AppColors.backgroundDark,
+class _CategoryManagementPageState extends State<CategoryManagementPage> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final token = auth.token ?? '';
+
+    return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= HEADER =================
-          ManagementHeader(
-            title: 'Categories',
-            subtitle: 'Manage and organize your product taxonomy.',
-            actionLabel: 'Add Category',
-            onAction: () {},
-          ),
-
-          const SizedBox(height: 24),
-
-          // ================= FILTER BAR =================
-          _filterBar(),
-
-          const SizedBox(height: 24),
-
-          // ================= TABLE =================
-          Expanded(
-            child: _categoryTable(screenWidth),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ================= FILTER BAR =================
-  Widget _filterBar() {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: Row(
-        children: [
-          // Search
-          Expanded(
-            child: TextField(
-              style: AppTextStyles.body,
-              decoration: InputDecoration(
-                prefixIcon:
-                    const Icon(Icons.search, color: AppColors.textSecondary),
-                hintText: 'Filter categories...',
-                hintStyle: AppTextStyles.caption,
-                filled: true,
-                fillColor: AppColors.backgroundDark,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
-          // Status filter
-          _dropdown('All Status'),
-
-          const SizedBox(width: 8),
-
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.filter_list),
-            color: AppColors.textSecondary,
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.backgroundDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: const BorderSide(color: AppColors.borderDark),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _dropdown(String hint) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundDark,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          hint: Text(hint, style: AppTextStyles.caption),
-          dropdownColor: AppColors.surfaceDark,
-          iconEnabledColor: AppColors.textSecondary,
-          items: const [],
-          onChanged: (_) {},
-        ),
-      ),
-    );
-  }
-
-  // ================= DATA TABLE =================
-  Widget _categoryTable(double screenWidth) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenWidth - 280 - 48,
-          ),
-          child: DataTable(
-            headingRowHeight: 48,
-            dataRowHeight: 76,
-            headingRowColor: WidgetStateProperty.all(AppColors.backgroundDark),
-            headingTextStyle: AppTextStyles.labelSmall,
-            dataTextStyle: AppTextStyles.body,
-            columnSpacing: 32,
-            columns: const [
-              DataColumn(label: Text('CATEGORY')),
-              DataColumn(label: Text('DESCRIPTION')),
-              DataColumn(label: Text('STATUS')),
-              DataColumn(label: Text('ITEMS')),
-              DataColumn(label: Text('ACTIONS')),
-            ],
-            rows: [
-              _CategoryRow(
-                icon: Icons.devices,
-                iconColor: Colors.indigoAccent,
-                name: 'Electronics',
-                description:
-                    'Computers, smartphones, and accessories for the modern office.',
-                status: 'Active',
-                items: '1,248',
-              ),
-              _CategoryRow(
-                icon: Icons.chair,
-                iconColor: Colors.orangeAccent,
-                name: 'Office Furniture',
-                description:
-                    'Ergonomic chairs, desks, and workspace organization units.',
-                status: 'Active',
-                items: '856',
-              ),
-              _CategoryRow(
-                icon: Icons.add_shopping_cart_outlined,
-                iconColor: Colors.pinkAccent,
-                name: 'Legacy Merchandise',
-                description:
-                    'Old branded t-shirts and mugs. No longer in production.',
-                status: 'Inactive',
-                items: '0',
-              ),
-              _CategoryRow(
-                icon: Icons.cloud,
-                iconColor: Colors.cyanAccent,
-                name: 'SaaS Subscriptions',
-                description: 'Digital licenses for third-party tools.',
-                status: 'Active',
-                items: '42',
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ================= CATEGORY ROW =================
-class _CategoryRow extends DataRow {
-  _CategoryRow({
-    required IconData icon,
-    required Color iconColor,
-    required String name,
-    required String description,
-    required String status,
-    required String items,
-  }) : super(
-          cells: [
-            DataCell(
-              Row(
+          // Header with Add button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    height: 36,
-                    width: 36,
-                    decoration: BoxDecoration(
-                      color: AppColors.backgroundDark,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.borderDark),
-                    ),
-                    child: Icon(icon, size: 18, color: iconColor),
+                  Text(
+                    'Categories',
+                    style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  const SizedBox(width: 12),
-                  Text(name),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Manage and organize your product taxonomy.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey[600],
+                    ),
+                  ),
                 ],
               ),
+              ElevatedButton.icon(
+                onPressed: () => _showAddCategoryDialog(context, token),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Category'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+
+          // Search bar
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search categories...',
+              prefixIcon: const Icon(Icons.search),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              isDense: true,
             ),
-            DataCell(
-              SizedBox(
-                width: 320,
-                child: Text(
-                  description,
-                  style: AppTextStyles.caption,
-                  overflow: TextOverflow.ellipsis,
+            onChanged: (value) => setState(() {}),
+          ),
+          const SizedBox(height: 24),
+
+          // Table
+          Expanded(
+            child: FutureBuilder<List<Category>>(
+              future: context.read<CategoryRepository>().fetchCategories(token: token),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error, size: 48, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text('Error: ${snapshot.error}'),
+                      ],
+                    ),
+                  );
+                }
+
+                var categories = snapshot.data ?? [];
+
+                // Filter by search
+                if (_searchController.text.isNotEmpty) {
+                  categories = categories
+                      .where((c) => c.name
+                          .toLowerCase()
+                          .contains(_searchController.text.toLowerCase()))
+                      .toList();
+                }
+
+                if (categories.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.category, size: 48, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
+                        Text('No categories found',
+                            style: Theme.of(context).textTheme.bodyLarge),
+                      ],
+                    ),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Name')),
+                      DataColumn(label: Text('Description')),
+                      DataColumn(label: Text('Products')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows: categories
+                        .map((category) => DataRow(cells: [
+                              DataCell(Text(category.name)),
+                              DataCell(
+                                Text(
+                                  (category.description ?? 'N/A').length > 50
+                                      ? '${(category.description ?? 'N/A').substring(0, 50)}...'
+                                      : (category.description ?? 'N/A'),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              DataCell(
+                                Text('${category.productCount}'),
+                              ),
+                              DataCell(
+                                Row(
+                                  children: [
+                                    TextButton.icon(
+                                      onPressed: () => _showEditCategoryDialog(
+                                        context,
+                                        category,
+                                        token,
+                                      ),
+                                      icon: const Icon(Icons.edit),
+                                      label: const Text('Edit'),
+                                    ),
+                                    TextButton.icon(
+                                      onPressed: () => _deleteCategory(
+                                        context,
+                                        category,
+                                        token,
+                                      ),
+                                      icon: const Icon(Icons.delete),
+                                      label: const Text('Delete'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]))
+                        .toList(),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showAddCategoryDialog(BuildContext context, String token) async {
+    final nameController = TextEditingController();
+    final descriptionController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Category'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Category Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
-            ),
-            DataCell(StatusPill(status)),
-            DataCell(
-              Text(
-                items,
-                style: AppTextStyles.caption.copyWith(
-                  fontFeatures: const [FontFeature.tabularFigures()],
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                maxLines: 3,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (nameController.text.isEmpty) {
+                UIFeedback.showSnackBar(context, 'Category name is required');
+                return;
+              }
+
+              try {
+                final repository = context.read<CategoryRepository>();
+                await repository.createCategory(
+                  token: token,
+                  name: nameController.text,
+                );
+
+                if (mounted) {
+                  Navigator.pop(context);
+                  UIFeedback.showSnackBar(context, 'Category created');
+                  setState(() {});
+                }
+              } catch (e) {
+                if (mounted) {
+                  UIFeedback.showSnackBar(context, 'Failed to create category: $e');
+                }
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showEditCategoryDialog(
+    BuildContext context,
+    Category category,
+    String token,
+  ) async {
+    final nameController = TextEditingController(text: category.name);
+    final descriptionController =
+        TextEditingController(text: category.description);
+
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Category'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Category Name',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
               ),
-            ),
-            const DataCell(
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(Icons.edit, size: 18, color: AppColors.textSecondary),
-                  SizedBox(width: 12),
-                  Icon(Icons.delete, size: 18, color: Colors.redAccent),
-                ],
+              const SizedBox(height: 12),
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  labelText: 'Description',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                maxLines: 3,
               ),
-            ),
-          ],
-        );
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              if (nameController.text.isEmpty) {
+                UIFeedback.showSnackBar(context, 'Category name is required');
+                return;
+              }
+
+              try {
+                final repository = context.read<CategoryRepository>();
+                await repository.updateCategory(
+                  token: token,
+                  categoryId: category.id,
+                  name: nameController.text,
+                );
+
+                if (mounted) {
+                  Navigator.pop(context);
+                  UIFeedback.showSnackBar(context, 'Category updated');
+                  setState(() {});
+                }
+              } catch (e) {
+                if (mounted) {
+                  UIFeedback.showSnackBar(context, 'Failed to update category: $e');
+                }
+              }
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteCategory(
+    BuildContext context,
+    Category category,
+    String token,
+  ) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Category'),
+        content: Text('Delete "${category.name}"? This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    try {
+      final repository = context.read<CategoryRepository>();
+      await repository.deleteCategory(
+        token: token,
+        categoryId: category.id,
+      );
+
+      if (mounted) {
+        UIFeedback.showSnackBar(context, 'Category deleted');
+        setState(() {});
+      }
+    } catch (e) {
+      if (mounted) {
+        UIFeedback.showSnackBar(context, 'Failed to delete category: $e');
+      }
+    }
+  }
 }
+

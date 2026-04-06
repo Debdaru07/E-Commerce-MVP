@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_colors.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../models/product_ui_model.dart';
-import '../../../../core/constants/app_text_styles.dart';
+import '../../../../shared/constants/app_text_styles.dart';
 import '../pages/product_details/product_details_page.dart';
 import 'product_badge.dart';
 

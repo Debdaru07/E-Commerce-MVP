@@ -1,4 +1,4 @@
-// lib/core/network/api_client.dart
+// lib/shared/network/api_client.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/env.dart';

@@ -3,8 +3,7 @@ import 'package:http/http.dart';
 import '../config/env.dart';
 import '../network/api_client.dart';
 import '../network/api_exceptions.dart';
-
-enum UserRole { admin, dealer, consumer }
+import '../models/user_role.dart';
 
 class AuthService {
   /// LOGIN

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
-import '../../../core/routing/app_routes.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../../../shared/constants/app_text_styles.dart';
+import '../../../shared/routing/app_routes.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../widgets/sidebar_menu_item.dart';
 import 'admin_tabs.dart';

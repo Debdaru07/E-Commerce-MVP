@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
-import '../../core/theme/theme_provider.dart';
-import '../../core/routing/app_routes.dart';
+import '../../shared/theme/theme_provider.dart';
+import '../../shared/routing/app_routes.dart';
 
 class NavbarSection extends StatelessWidget {
   final bool scrolled;

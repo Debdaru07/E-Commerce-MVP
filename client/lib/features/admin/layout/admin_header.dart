@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_text_styles.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../../../shared/constants/app_text_styles.dart';
 
 class AdminHeader extends StatelessWidget {
   const AdminHeader({super.key});

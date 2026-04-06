@@ -7,6 +7,7 @@ import '../../features/admin/pages/admin_dashboard_page.dart';
 import '../../features/auth/pages/login_consumer_page.dart';
 import '../../features/auth/pages/login_dealer_page.dart';
 import '../../features/auth/pages/signup_consumer_page.dart';
+import '../../features/auth/pages/signup_dealer_page.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -23,6 +24,9 @@ class AppRouter {
 
       case AppRoutes.signupConsumer:
         return MaterialPageRoute(builder: (_) => const SignupConsumerPage());
+
+      case AppRoutes.signupDealer:
+        return MaterialPageRoute(builder: (_) => const SignupDealerPage());
 
       case AppRoutes.loginAdmin:
         return MaterialPageRoute(builder: (_) => const LoginAdminPage());

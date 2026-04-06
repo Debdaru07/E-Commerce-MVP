@@ -21,6 +21,9 @@ dependencies:
   # Icons
   cupertino_icons: ^1.0.6
   lucide_icons: ^0.257.0
+  flutter_dotenv: ^5.1.0
+  fluttertoast: ^8.2.4
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +33,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - .env

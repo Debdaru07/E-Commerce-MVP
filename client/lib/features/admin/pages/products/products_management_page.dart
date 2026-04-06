@@ -1,99 +1,159 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../data/models/product_model.dart';
+import '../../../../domain/repositories/product_repository.dart';
+import '../../../../features/auth/providers/auth_provider.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_text_styles.dart';
-import '../../widgets/management_header.dart';
-import '../../widgets/status_pill.dart';
-
-class ProductsManagementPage extends StatelessWidget {
+class ProductsManagementPage extends StatefulWidget {
   const ProductsManagementPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  State<ProductsManagementPage> createState() => _ProductsManagementPageState();
+}
 
-    return Container(
-      color: AppColors.backgroundDark,
+class _ProductsManagementPageState extends State<ProductsManagementPage> {
+  final _searchController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
+    final token = auth.token ?? '';
+
+    return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= HEADER =================
-          ManagementHeader(
-            title: 'Product Management',
-            subtitle:
-                'Manage your product catalog, inventory status, and dealers.',
-            actionLabel: 'Add Product',
-            onAction: () {},
+          // Header
+          Text(
+            'Product Management',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
-
-          const SizedBox(height: 24),
-
-          // ================= FILTERS =================
-          _filtersRow(),
-
-          const SizedBox(height: 24),
-
-          // ================= TABLE =================
-          Expanded(
-            child: _productsTable(screenWidth),
+          const SizedBox(height: 8),
+          Text(
+            'Manage your product catalog, inventory status, and dealer products.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[600],
+            ),
           ),
-        ],
-      ),
-    );
-  }
+          const SizedBox(height: 32),
 
-  // ================= FILTER BAR =================
-  Widget _filtersRow() {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: Row(
-        children: [
-          // Search
-          Expanded(
-            flex: 5,
-            child: TextField(
-              style: AppTextStyles.body,
-              decoration: InputDecoration(
-                prefixIcon:
-                    const Icon(Icons.search, color: AppColors.textSecondary),
-                hintText: 'Search by product name, SKU, or ID...',
-                hintStyle: AppTextStyles.caption,
-                filled: true,
-                fillColor: AppColors.backgroundDark,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+          // Search bar
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search by product name...',
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    isDense: true,
+                  ),
+                  onChanged: (value) => setState(() {}),
                 ),
               ),
-            ),
+            ],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(height: 24),
 
-          // Dealer filter
-          _dropdown('Filter by Dealer'),
-          const SizedBox(width: 12),
+          // Table
+          Expanded(
+            child: FutureBuilder<List<Product>>(
+              future: context.read<ProductRepository>().fetchProducts(token: token),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          // Category filter
-          _dropdown('Filter by Category'),
-          const SizedBox(width: 12),
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error, size: 48, color: Colors.red),
+                        const SizedBox(height: 16),
+                        Text('Error: ${snapshot.error}'),
+                      ],
+                    ),
+                  );
+                }
 
-          // Export
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.download, size: 20),
-            color: AppColors.textSecondary,
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.backgroundDark,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-                side: BorderSide(color: AppColors.borderDark),
-              ),
+                var products = snapshot.data ?? [];
+
+                // Filter by search
+                if (_searchController.text.isNotEmpty) {
+                  products = products
+                      .where((p) => p.title
+                          .toLowerCase()
+                          .contains(_searchController.text.toLowerCase()))
+                      .toList();
+                }
+
+                if (products.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.inventory, size: 48, color: Colors.grey[400]),
+                        const SizedBox(height: 16),
+                        Text('No products found',
+                            style: Theme.of(context).textTheme.bodyLarge),
+                      ],
+                    ),
+                  );
+                }
+
+                return SingleChildScrollView(
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Product')),
+                      DataColumn(label: Text('Dealer')),
+                      DataColumn(label: Text('Price')),
+                      DataColumn(label: Text('Stock')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows: products
+                        .map((product) => DataRow(cells: [
+                              DataCell(Text(product.title)),
+                              DataCell(Text(product.dealerId)),
+                              DataCell(Text('\$${product.unitPrice.toStringAsFixed(2)}')),
+                              DataCell(Text('${product.stock}')),
+                              DataCell(
+                                Chip(
+                                  label: Text(product.isActive ? 'Active' : 'Inactive'),
+                                  backgroundColor: product.isActive
+                                      ? Colors.blue.withOpacity(0.2)
+                                      : Colors.grey.withOpacity(0.2),
+                                  labelStyle: TextStyle(
+                                    color: product.isActive
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                TextButton.icon(
+                                  onPressed: () => _viewDetails(context, product),
+                                  icon: const Icon(Icons.info),
+                                  label: const Text('Details'),
+                                ),
+                              ),
+                            ]))
+                        .toList(),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -101,150 +161,39 @@ class ProductsManagementPage extends StatelessWidget {
     );
   }
 
-  Widget _dropdown(String hint) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundDark,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          hint: Text(hint, style: AppTextStyles.caption),
-          dropdownColor: AppColors.surfaceDark,
-          iconEnabledColor: AppColors.textSecondary,
-          items: const [],
-          onChanged: (_) {},
-        ),
-      ),
-    );
-  }
-
-  // ================= DATA TABLE =================
-  Widget _productsTable(double screenWidth) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.borderDark),
-      ),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            minWidth: screenWidth - 280 - 48,
-          ),
-          child: DataTable(
-            headingRowHeight: 48,
-            dataRowHeight: 78,
-            headingRowColor: WidgetStateProperty.all(AppColors.backgroundDark),
-            headingTextStyle: AppTextStyles.labelSmall,
-            dataTextStyle: AppTextStyles.body,
-            columnSpacing: 32,
-            columns: const [
-              DataColumn(label: Text('PRODUCT')),
-              DataColumn(label: Text('DEALER')),
-              DataColumn(label: Text('CATEGORY')),
-              DataColumn(label: Text('PRICE')),
-              DataColumn(label: Text('STATUS')),
-              DataColumn(label: Text('ACTIONS')),
-            ],
-            rows: [
-              _ProductRow(
-                name: 'Ergonomic Office Chair',
-                sku: '#SKU-90231',
-                dealer: 'OfficeDepot Inc.',
-                category: 'Furniture',
-                price: '\$299.00',
-                status: 'In Stock',
-              ),
-              _ProductRow(
-                name: 'Wireless Mech Keyboard',
-                sku: '#SKU-22910',
-                dealer: 'TechGear Solutions',
-                category: 'Electronics',
-                price: '\$145.50',
-                status: 'Low Stock',
-              ),
-              _ProductRow(
-                name: '27-inch 4K Monitor',
-                sku: '#SKU-88219',
-                dealer: 'ScreenMasters',
-                category: 'Electronics',
-                price: '\$450.00',
-                status: 'Out of Stock',
-              ),
-              _ProductRow(
-                name: 'Smart Watch Series 5',
-                sku: '#SKU-11234',
-                dealer: 'TechGear Solutions',
-                category: 'Accessories',
-                price: '\$220.00',
-                status: 'In Stock',
-              ),
-              _ProductRow(
-                name: 'Sport Sneakers Red',
-                sku: '#SKU-54321',
-                dealer: 'FootwearDistributors',
-                category: 'Apparel',
-                price: '\$89.99',
-                status: 'Draft',
-              ),
+  void _viewDetails(BuildContext context, Product product) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(product.title),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Description: ${product.description}'),
+              const SizedBox(height: 12),
+              Text('Price: \$${product.unitPrice.toStringAsFixed(2)}'),
+              const SizedBox(height: 12),
+              Text('Stock: ${product.stock}'),
+              const SizedBox(height: 12),
+              Text('Dealer: ${product.dealerId}'),
+              const SizedBox(height: 12),
+              Text('Rating: ${product.rating}/5 (${product.reviewCount} reviews)'),
+              const SizedBox(height: 12),
+              Text('Status: ${product.isActive ? 'Active' : 'Inactive'}'),
+              const SizedBox(height: 12),
+              Text('Created: ${product.createdAt}'),
             ],
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
       ),
     );
   }
-}
-
-// ================= PRODUCT ROW =================
-class _ProductRow extends DataRow {
-  _ProductRow({
-    required String name,
-    required String sku,
-    required String dealer,
-    required String category,
-    required String price,
-    required String status,
-  }) : super(
-          cells: [
-            DataCell(
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(name),
-                  SizedBox(height: 4),
-                  Text(sku, style: AppTextStyles.caption),
-                ],
-              ),
-            ),
-            DataCell(Text(dealer, style: AppTextStyles.caption)),
-            DataCell(_categoryPill(category)),
-            DataCell(Text(price)),
-            DataCell(StatusPill(status)),
-            DataCell(
-              Icon(Icons.more_vert, color: AppColors.textSecondary),
-            ),
-          ],
-        );
-}
-
-// ================= CATEGORY PILL =================
-Widget _categoryPill(String category) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-    decoration: BoxDecoration(
-      color: AppColors.primary.withOpacity(0.12),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child: Text(
-      category,
-      style: AppTextStyles.caption.copyWith(
-        color: AppColors.primary,
-      ),
-    ),
-  );
 }

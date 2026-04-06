@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_text_styles.dart';
+import '../../../../shared/constants/app_text_styles.dart';
 
 class StatusPill extends StatelessWidget {
   final String status;

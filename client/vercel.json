@@ -1,4 +1,6 @@
 {
+  "buildCommand": "bash vercel_build.sh",
+  "outputDirectory": "build/web",
   "routes": [
     {
       "src": "/(.*\\.(js|css|wasm|json|png|jpg|jpeg|svg|ico|ttf|woff|woff2))",

@@ -1,19 +1,26 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../../../core/routing/app_routes.dart';
+import 'package:provider/provider.dart';
+
+import '../../../shared/models/user_role.dart';
+import '../../../shared/routing/app_routes.dart';
 import '../../../presentation/components/buttons/primary_button.dart';
+import '../../../presentation/utils/ui_feedback.dart';
+import '../providers/auth_provider.dart';
 
 class LoginDealerPage extends StatelessWidget {
   const LoginDealerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController emailCtrl = TextEditingController();
+    final TextEditingController passwordCtrl = TextEditingController();
+    final auth = context.watch<AuthProvider>();
     final theme = Theme.of(context);
 
     return Scaffold(
       body: Stack(
         children: [
-          // 🌈 Ambient background glow
           Positioned(
             top: -120,
             left: -120,
@@ -24,7 +31,6 @@ class LoginDealerPage extends StatelessWidget {
             right: -150,
             child: _Glow(color: Colors.indigo.withOpacity(0.08)),
           ),
-
           Center(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(24),
@@ -49,7 +55,6 @@ class LoginDealerPage extends StatelessWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // 🔰 Logo
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
@@ -82,7 +87,6 @@ class LoginDealerPage extends StatelessWidget {
 
                       const SizedBox(height: 28),
 
-                      // 📧 Email
                       TextFormField(
                         decoration: const InputDecoration(
                           labelText: 'Business email',
@@ -92,7 +96,6 @@ class LoginDealerPage extends StatelessWidget {
 
                       const SizedBox(height: 16),
 
-                      // 🔒 Password
                       TextFormField(
                         obscureText: true,
                         decoration: const InputDecoration(
@@ -115,13 +118,31 @@ class LoginDealerPage extends StatelessWidget {
 
                       // 🔑 Dealer Sign In
                       PrimaryButton(
-                        text: 'Sign In as Dealer',
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(
-                            context,
-                            AppRoutes.dealerDashboard,
-                          );
-                        },
+                        text: auth.isLoading ? 'Signing in...' : 'Sign In',
+                        onPressed: auth.isLoading
+                            ? null
+                            : () async {
+                                final success = await auth.login(
+                                  role: UserRole.consumer,
+                                  email: emailCtrl.text.trim(),
+                                  password: passwordCtrl.text.trim(),
+                                );
+
+                                if (!context.mounted) return;
+
+                                if (success) {
+                                  UIFeedback.showToast('Login successful');
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    AppRoutes.consumerApp,
+                                  );
+                                } else {
+                                  UIFeedback.showSnackBar(
+                                    context,
+                                    auth.error ?? 'Login failed',
+                                  );
+                                }
+                              },
                       ),
 
                       const SizedBox(height: 28),

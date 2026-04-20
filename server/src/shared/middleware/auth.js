@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js'
+import supabase from '../database/supabase.js'
 
 export const protect = async (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]

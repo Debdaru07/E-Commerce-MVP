@@ -1,9 +1,23 @@
-import supabase from '../../config/supabase.js'
+import supabase from '../../../shared/database/supabase.js'
 
-export const signupConsumer = async (req, res) => {
+/**
+ * DEALER SIGNUP
+ */
+export const signupDealer = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ error: 'Invalid JSON body' })
+  }
+
   const { email, password, full_name } = req.body
 
+  if (!email || !password || !full_name) {
+    return res.status(400).json({
+      error: 'Email, password and full name are required'
+    })
+  }
+
   try {
+    // 1️⃣ Create auth user
     const { data: authData, error: authError } =
       await supabase.auth.admin.createUser({
         email,
@@ -11,28 +25,42 @@ export const signupConsumer = async (req, res) => {
         email_confirm: true
       })
 
-    if (authError) throw authError
+    if (authError) {
+      return res.status(409).json({ error: authError.message })
+    }
 
-    // ✅ IMPORTANT: store email in profiles
+    // 2️⃣ Upsert profile (SAFE)
     const { error: profileError } = await supabase
       .from('profiles')
-      .insert({
+      .upsert({
         id: authData.user.id,
-        email,                // 👈 FIX
-        role: 'CONSUMER',
+        role: 'DEALER',
         full_name,
         is_active: true
       })
 
     if (profileError) throw profileError
 
-    res.status(201).json({ message: 'Consumer registered successfully' })
+    res.status(201).json({
+      message: 'Dealer registered successfully'
+    })
+
   } catch (err) {
-    res.status(400).json({ error: err.message })
+    console.error(err)
+    res.status(500).json({ error: 'Server error' })
   }
 }
 
-export const loginConsumer = async (req, res) => {
+/**
+ * DEALER LOGIN
+ */
+export const loginDealer = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({
+      error: 'Request body missing or invalid JSON'
+    })
+  }
+
   const { email, password } = req.body
 
   if (!email || !password) {
@@ -42,7 +70,7 @@ export const loginConsumer = async (req, res) => {
   }
 
   try {
-    // 1️⃣ Login using Supabase Auth
+    // 1️⃣ Login via Supabase Auth
     const { data, error } =
       await supabase.auth.signInWithPassword({
         email,
@@ -53,7 +81,7 @@ export const loginConsumer = async (req, res) => {
       return res.status(401).json({ error: 'Invalid credentials' })
     }
 
-    // 2️⃣ Fetch profile
+    // 2️⃣ Fetch dealer profile
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('role, is_active')
@@ -64,23 +92,21 @@ export const loginConsumer = async (req, res) => {
       return res.status(403).json({ error: 'Profile not found' })
     }
 
-    // 3️⃣ Role check
-    if (profile.role !== 'CONSUMER') {
+    if (profile.role !== 'DEALER') {
       return res.status(403).json({ error: 'Access denied' })
     }
 
     if (!profile.is_active) {
-      return res.status(403).json({ error: 'Account disabled' })
+      return res.status(403).json({ error: 'Dealer account disabled' })
     }
 
-    // 4️⃣ Success
     res.json({
-      message: 'Consumer login successful',
+      message: 'Dealer login successful',
       access_token: data.session.access_token
     })
 
   } catch (err) {
-    res.status(500).json({ error: err.message })
+    console.error(err)
+    res.status(500).json({ error: 'Server error' })
   }
 }
-

@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
   signupDealer,
   loginDealer
-} from '../../controllers/auth/dealer.controller.js'
+} from '../controllers/dealer.controller.js'
 
 const router = Router()
 

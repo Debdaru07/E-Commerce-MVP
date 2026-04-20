@@ -9,8 +9,8 @@ import {
 
 } from '../controllers/products.controller.js'
 
-import { verifyToken } from '../middleware/auth.js'
-import { requireRole } from '../middleware/role.js'
+import { verifyToken } from '../../../shared/middleware/auth.js'
+import { requireRole } from '../../../shared/middleware/role.js'
 
 const router = Router()
 

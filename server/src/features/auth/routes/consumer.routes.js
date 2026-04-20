@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
   signupConsumer,
   loginConsumer
-} from '../../controllers/auth/consumer.controller.js'
+} from '../controllers/consumer.controller.js'
 
 const router = Router()
 

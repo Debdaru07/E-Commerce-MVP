@@ -1,14 +1,14 @@
 import express from 'express'
 import cors from 'cors'
 
-import categoryRoutes from './routes/category.routes.js'
-import consumerRoutes from './routes/auth/consumer.routes.js'
-import dealerRoutes from './routes/auth/dealer.routes.js'
-import adminRoutes from './routes/auth/admin.routes.js'
-import cartRoutes from './routes/cart.routes.js'
-import productRoutes from './routes/products.routes.js'
-import orderRoutes from './routes/orders.routes.js'
-import wishlistRoutes from './routes/wishlist.routes.js'
+import categoryRoutes from './features/category/routes/category.routes.js'
+import consumerRoutes from './features/auth/routes/consumer.routes.js'
+import dealerRoutes from './features/auth/routes/dealer.routes.js'
+import adminRoutes from './features/auth/routes/admin.routes.js'
+import cartRoutes from './features/cart/routes/cart.routes.js'
+import productRoutes from './features/products/routes/products.routes.js'
+import orderRoutes from './features/orders/routes/orders.routes.js'
+import wishlistRoutes from './features/wishlist/routes/wishlist.routes.js'
 
 const app = express()
 

@@ -1,4 +1,4 @@
-import supabase from '../config/supabase.js'
+import supabase from '../../../shared/database/supabase.js'
 
 export const getCategories = async (req, res) => {
     try {       

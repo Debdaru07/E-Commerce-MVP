@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../features/auth/providers/auth_provider.dart';
+import 'shared/models/user_role.dart';
+import 'features/auth/providers/auth_provider.dart';
 import 'features/admin/pages/admin_dashboard_page.dart';
+import 'features/dealer/pages/dealer_dashboard_page.dart';
+import 'features/consumer/pages/consumer_home_page.dart';
 import 'presentation/pages/landing_page.dart';
 
 class AuthGate extends StatefulWidget {
@@ -36,9 +39,24 @@ class _AuthGateState extends State<AuthGate> {
     }
 
     if (auth.isAuthenticated) {
+      // Route based on user role
       return Navigator(
-        onGenerateRoute: (settings) =>
-            MaterialPageRoute(builder: (_) => const AdminDashboardPage()),
+        onGenerateRoute: (settings) {
+          Widget page;
+          
+          switch (auth.userRole) {
+            case UserRole.admin:
+              page = const AdminDashboardPage();
+            case UserRole.dealer:
+              page = const DealerDashboardPage();
+            case UserRole.consumer:
+              page = const ConsumerHomePage();
+            case null:
+              page = const LandingPage();
+          }
+
+          return MaterialPageRoute(builder: (_) => page);
+        },
       );
     }
 

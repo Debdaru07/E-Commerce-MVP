@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../core/constants/app_colors.dart';
-import '../../../../core/constants/app_text_styles.dart';
+import '../../../../shared/constants/app_colors.dart';
+import '../../../../shared/constants/app_text_styles.dart';
 import '../../models/product_ui_model.dart';
 
 class ProductDetailsPage extends StatelessWidget {
@@ -17,37 +17,44 @@ class ProductDetailsPage extends StatelessWidget {
         elevation: 0,
         leading: const BackButton(),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1280),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final isDesktop = constraints.maxWidth >= 900;
+      body: SingleChildScrollView(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1280),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isDesktop = constraints.maxWidth >= 900;
 
-                if (isDesktop) {
-                  return Row(
+                  return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(flex: 7, child: _Gallery(product)),
-                      const SizedBox(width: 48),
-                      Expanded(
-                        flex: 5,
-                        child: _StickyProductInfo(product),
-                      ),
+                      /// MAIN PRODUCT SECTION
+                      if (isDesktop)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 7, child: _Gallery(product)),
+                            const SizedBox(width: 48),
+                            Expanded(
+                                flex: 5, child: _StickyProductInfo(product)),
+                          ],
+                        )
+                      else ...[
+                        _Gallery(product),
+                        const SizedBox(height: 32),
+                        _ProductInfo(product),
+                      ],
+
+                      const SizedBox(height: 80),
+
+                      /// YOU MIGHT ALSO LIKE
+                      _RelatedProductsSection(),
                     ],
                   );
-                }
-
-                return ListView(
-                  children: [
-                    _Gallery(product),
-                    const SizedBox(height: 32),
-                    _ProductInfo(product),
-                  ],
-                );
-              },
+                },
+              ),
             ),
           ),
         ),
@@ -73,10 +80,7 @@ class _Gallery extends StatelessWidget {
           aspectRatio: 4 / 3,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(20),
-            child: Image.network(
-              product.imageUrl,
-              fit: BoxFit.cover,
-            ),
+            child: Image.network(product.imageUrl, fit: BoxFit.cover),
           ),
         ),
         const SizedBox(height: 16),
@@ -93,10 +97,7 @@ class _Gallery extends StatelessWidget {
                       color: AppColors.surfaceDark,
                       borderRadius: BorderRadius.circular(14),
                       border: index == 0
-                          ? Border.all(
-                              color: AppColors.primary,
-                              width: 2,
-                            )
+                          ? Border.all(color: AppColors.primary, width: 2)
                           : null,
                     ),
                   ),
@@ -144,7 +145,6 @@ class _ProductInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        /// Category / Tag
         Text(
           'Wireless Mechanical',
           style: AppTextStyles.labelSmall.copyWith(
@@ -153,18 +153,11 @@ class _ProductInfo extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-
-        /// Title
         Text(
           product.name,
-          style: AppTextStyles.heading.copyWith(
-            fontSize: 32,
-            height: 1.2,
-          ),
+          style: AppTextStyles.heading.copyWith(fontSize: 32, height: 1.2),
         ),
         const SizedBox(height: 16),
-
-        /// Price Row
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -188,27 +181,163 @@ class _ProductInfo extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 24),
-
-        /// Description
         Text(
           'Experience the ultimate typing precision with premium materials, '
           'next-gen performance, and a refined sound profile.',
           style: AppTextStyles.body.copyWith(height: 1.6),
         ),
         const SizedBox(height: 36),
-
-        /// CTA Buttons
         _PrimaryButton(
           label: 'Add to Cart',
           icon: Icons.shopping_bag_outlined,
           onTap: () {},
         ),
         const SizedBox(height: 12),
-        _SecondaryButton(
-          label: 'Buy Now',
-          onTap: () {},
+        _SecondaryButton(label: 'Buy Now', onTap: () {}),
+      ],
+    );
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                         You Might Also Like Section                         */
+/* -------------------------------------------------------------------------- */
+
+class _RelatedProductsSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final products = List.generate(
+      4,
+      (i) => ProductUIModel(
+        name: 'Product $i',
+        price: 49 + i * 20,
+        rating: 4.5,
+        imageUrl: 'https://picsum.photos/500/500?random=$i',
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'You might also like',
+              style: AppTextStyles.heading.copyWith(fontSize: 24),
+            ),
+            const Spacer(),
+            TextButton(
+              onPressed: () {},
+              child: const Text('View all →'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: products.length,
+          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 280,
+            crossAxisSpacing: 24,
+            mainAxisSpacing: 24,
+            childAspectRatio: 0.78,
+          ),
+          itemBuilder: (context, index) {
+            return RelatedProductCard(product: products[index]);
+          },
         ),
       ],
+    );
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Related Product Card                           */
+/* -------------------------------------------------------------------------- */
+
+class RelatedProductCard extends StatelessWidget {
+  final ProductUIModel product;
+
+  const RelatedProductCard({super.key, required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceDark,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white10),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          /// IMAGE (fixed)
+          AspectRatio(
+            aspectRatio: 1,
+            child: Image.network(
+              product.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: Colors.black12,
+                alignment: Alignment.center,
+                child: const Icon(Icons.image, size: 32),
+              ),
+            ),
+          ),
+
+          /// CONTENT (flexible, bounded)
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Category
+                  Text(
+                    'Accessories',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.caption.copyWith(fontSize: 11),
+                  ),
+                  const SizedBox(height: 6),
+
+                  /// Name
+                  Text(
+                    product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppTextStyles.body.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const Spacer(), // 🔥 prevents overflow
+
+                  /// Price + Rating
+                  Row(
+                    children: [
+                      Text(
+                        '\$${product.price.toStringAsFixed(0)}',
+                        style: AppTextStyles.body.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.star, size: 14, color: Colors.amber),
+                      const SizedBox(width: 4),
+                      Text(
+                        product.rating.toString(),
+                        style: AppTextStyles.caption,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -239,7 +368,6 @@ class _PrimaryButton extends StatelessWidget {
         label: Text(label),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
-          elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

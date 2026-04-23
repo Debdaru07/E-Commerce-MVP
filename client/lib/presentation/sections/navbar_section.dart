@@ -1,10 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
-import '../../core/theme/theme_provider.dart';
-import '../../core/routing/app_routes.dart';
+import '../../shared/theme/theme_provider.dart';
+import '../../shared/routing/app_routes.dart';
 
 class NavbarSection extends StatelessWidget {
   final bool scrolled;
@@ -109,6 +110,8 @@ class _DesktopNav extends StatelessWidget {
         ),
 
         const SizedBox(width: 16),
+
+        // 🔑 FIXED (using named route)
         OutlineButtonWidget(
           text: 'Sign In',
           onPressed: () {
@@ -120,6 +123,7 @@ class _DesktopNav extends StatelessWidget {
         ),
 
         const SizedBox(width: 12),
+
         PrimaryButton(
           text: 'Get Started',
           onPressed: () {
@@ -143,7 +147,6 @@ class _MobileNav extends StatelessWidget {
 
     return Row(
       children: [
-        // 🌗 Theme toggle (mobile)
         IconButton(
           icon: Icon(
             themeProvider.isDark
@@ -154,12 +157,9 @@ class _MobileNav extends StatelessWidget {
             context.read<ThemeProvider>().toggleTheme();
           },
         ),
-
         IconButton(
           icon: const Icon(Icons.menu),
-          onPressed: () {
-            // TODO: open mobile drawer
-          },
+          onPressed: () {},
         ),
       ],
     );

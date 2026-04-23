@@ -1,22 +1,30 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/services/auth_service.dart';
-import '../../../core/services/token_storage_service.dart';
+import '../../../domain/repositories/auth_repository.dart';
+import '../../../shared/models/user_role.dart';
+import '../../../shared/network/api_exceptions.dart';
 
 class AuthProvider extends ChangeNotifier {
+  final AuthRepository _repository;
+
+  AuthProvider(this._repository);
+
   bool _isLoading = false;
   String? _error;
   String? _token;
+  UserRole? _userRole;
   bool _isInitialized = false;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   String? get token => _token;
+  UserRole? get userRole => _userRole;
   bool get isAuthenticated => _token != null;
   bool get isInitialized => _isInitialized;
 
   Future<void> restoreSession() async {
-    _token = await TokenStorageService.getAccessToken();
+    _token = await _repository.getAccessToken();
+    _userRole = await _repository.getUserRole();
     _isInitialized = true;
     notifyListeners();
   }
@@ -30,21 +38,27 @@ class AuthProvider extends ChangeNotifier {
     _error = null;
 
     try {
-      final token = await AuthService.login(
+      final token = await _repository.login(
         role: role,
         email: email,
         password: password,
       );
 
       _token = token;
+      _userRole = role;
 
-      await TokenStorageService.saveTokens(
+      await _repository.saveTokens(
         accessToken: token,
+        userRole: role,
       );
 
       return true;
     } catch (e) {
-      _error = e.toString().replaceFirst('Exception: ', '');
+      if (e is ApiException) {
+        _error = e.message;
+      } else {
+        _error = e.toString().replaceFirst('Exception: ', '');
+      }
       return false;
     } finally {
       _setLoading(false);
@@ -61,7 +75,7 @@ class AuthProvider extends ChangeNotifier {
     _error = null;
 
     try {
-      await AuthService.signup(
+      await _repository.signup(
         role: role,
         email: email,
         password: password,
@@ -83,9 +97,10 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     _token = null;
+    _userRole = null;
     _error = null;
 
-    await TokenStorageService.clear();
+    await _repository.clearTokens();
 
     notifyListeners();
   }

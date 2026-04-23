@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/buttons/primary_button.dart';
 import '../components/buttons/outline_button.dart';
-import '../../core/routing/app_routes.dart';
+import '../../shared/routing/app_routes.dart';
 
 class CTASection extends StatelessWidget {
   const CTASection({super.key});

@@ -23,9 +23,14 @@ class ApiClient {
     Map<String, dynamic>? body,
     String? token,
   }) async {
+    final url = endpoint.startsWith('http')
+        ? endpoint
+        : '${Env.baseUrl}$endpoint';
+    print('API POST URL: $url');
+    print('API POST body: $body');
     return http
         .post(
-          Uri.parse('${Env.baseUrl}$endpoint'),
+          Uri.parse(url),
           headers: _headers(token),
           body: jsonEncode(body),
         )

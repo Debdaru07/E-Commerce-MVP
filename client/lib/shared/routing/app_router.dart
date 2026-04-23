@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+// import '../../auth_gate.dart';
+
 import '../../features/auth/pages/login_admin_page.dart';
-import '../../presentation/pages/landing_page.dart';
+ import '../../presentation/pages/landing_page.dart';
 import '../../features/consumer/pages/consumer_home_page.dart';
 import '../../features/dealer/pages/dealer_dashboard_page.dart';
 import '../../features/admin/pages/admin_dashboard_page.dart';
@@ -13,8 +15,8 @@ import 'app_routes.dart';
 class AppRouter {
   static Route<dynamic> generate(RouteSettings settings) {
     switch (settings.name) {
-      case AppRoutes.landing:
-        return MaterialPageRoute(builder: (_) => const LandingPage());
+          case AppRoutes.landing:
+  return MaterialPageRoute(builder: (_) => const LandingPage());
 
       case AppRoutes.loginConsumer:
         return MaterialPageRoute(builder: (_) => const LoginConsumerPage());

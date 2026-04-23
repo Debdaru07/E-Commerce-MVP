@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../domain/repositories/auth_repository.dart';
 import '../../../shared/models/user_role.dart';
+import '../../../shared/network/api_exceptions.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthRepository _repository;
@@ -53,7 +54,11 @@ class AuthProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      _error = e.toString().replaceFirst('Exception: ', '');
+      if (e is ApiException) {
+        _error = e.message;
+      } else {
+        _error = e.toString().replaceFirst('Exception: ', '');
+      }
       return false;
     } finally {
       _setLoading(false);

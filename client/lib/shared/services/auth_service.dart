@@ -19,6 +19,11 @@ class AuthService {
       'password': password,
     };
 
+    // DEBUG PRINTS
+    print('Dealer login endpoint: \\${Env.dealerLogin}');
+    print('Role: \\${role}');
+    print('Request body: \\${body}');
+
     switch (role) {
       case UserRole.admin:
         response = await ApiClient.post(
@@ -42,7 +47,9 @@ class AuthService {
         break;
     }
 
+    print('Dealer login response: \\${response.body}');
     final data = jsonDecode(response.body);
+    print('Decoded data: \\${data}');
 
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return data['access_token'];

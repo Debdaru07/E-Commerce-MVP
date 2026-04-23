@@ -8,14 +8,28 @@ import '../../../presentation/components/buttons/primary_button.dart';
 import '../../../presentation/utils/ui_feedback.dart';
 import '../providers/auth_provider.dart';
 
-class LoginDealerPage extends StatelessWidget {
+class LoginDealerPage extends StatefulWidget {
   const LoginDealerPage({super.key});
 
   @override
+  State<LoginDealerPage> createState() => _LoginDealerPageState();
+}
+
+class _LoginDealerPageState extends State<LoginDealerPage> {
+  final TextEditingController emailCtrl = TextEditingController();
+  final TextEditingController passwordCtrl = TextEditingController();
+
+  @override
+  void dispose() {
+    emailCtrl.dispose();
+    passwordCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final TextEditingController emailCtrl = TextEditingController();
-    final TextEditingController passwordCtrl = TextEditingController();
     final auth = context.watch<AuthProvider>();
+    print('Auth isLoading: ${auth.isLoading}'); // ADD THIS LINE
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -67,45 +81,37 @@ class LoginDealerPage extends StatelessWidget {
                           size: 32,
                         ),
                       ),
-
                       const SizedBox(height: 20),
-
                       Text(
                         'Dealer Login',
                         style: theme.textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-
                       const SizedBox(height: 8),
-
                       Text(
                         'Sign in to manage your business account.',
                         textAlign: TextAlign.center,
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(color: theme.hintColor),
                       ),
-
                       const SizedBox(height: 28),
-
                       TextFormField(
+                        controller: emailCtrl,
                         decoration: const InputDecoration(
                           labelText: 'Business email',
                           prefixIcon: Icon(Icons.mail_outline),
                         ),
                       ),
-
                       const SizedBox(height: 16),
-
                       TextFormField(
+                        controller: passwordCtrl,
                         obscureText: true,
                         decoration: const InputDecoration(
                           labelText: 'Password',
                           prefixIcon: Icon(Icons.lock_outline),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
@@ -113,30 +119,34 @@ class LoginDealerPage extends StatelessWidget {
                           child: const Text('Forgot password?'),
                         ),
                       ),
-
                       const SizedBox(height: 12),
-
-                      // 🔑 Dealer Sign In
                       PrimaryButton(
                         text: auth.isLoading ? 'Signing in...' : 'Sign In',
                         onPressed: auth.isLoading
                             ? null
                             : () async {
+                                print('Sign In button pressed');
                                 final success = await auth.login(
-                                  role: UserRole.consumer,
+                                  role: UserRole.dealer,
                                   email: emailCtrl.text.trim(),
                                   password: passwordCtrl.text.trim(),
                                 );
+                                print('Login result: $success');
 
-                                if (!context.mounted) return;
+                                if (!context.mounted) {
+                                  print('Context not mounted, aborting navigation.');
+                                  return;
+                                }
 
                                 if (success) {
+                                  print('Login success, navigating to dealer dashboard');
                                   UIFeedback.showToast('Login successful');
                                   Navigator.pushReplacementNamed(
                                     context,
-                                    AppRoutes.consumerApp,
+                                    AppRoutes.dealerDashboard,
                                   );
                                 } else {
+                                  print('Login failed: ${auth.error}');
                                   UIFeedback.showSnackBar(
                                     context,
                                     auth.error ?? 'Login failed',
@@ -144,10 +154,7 @@ class LoginDealerPage extends StatelessWidget {
                                 }
                               },
                       ),
-
                       const SizedBox(height: 28),
-
-                      // 🔁 Switch to consumer login
                       Wrap(
                         alignment: WrapAlignment.center,
                         spacing: 6,
